@@ -2,7 +2,7 @@
 import React from 'react';
 import { useGame } from '../context/GameContext';
 
-const AgeDisplay: React.FC = () => {
+const 年齡顯示: React.FC = () => {
   const { characterAge } = useGame();
   
   return (
@@ -12,4 +12,4 @@ const AgeDisplay: React.FC = () => {
   );
 };
 
-export default AgeDisplay;
+export default 年齡顯示;

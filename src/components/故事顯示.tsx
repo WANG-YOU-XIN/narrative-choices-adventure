@@ -2,7 +2,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useGame } from '../context/GameContext';
 
-const StoryDisplay: React.FC = () => {
+const 故事顯示: React.FC = () => {
   const { currentNode } = useGame();
   const textRef = useRef<HTMLDivElement>(null);
 
@@ -22,4 +22,4 @@ const StoryDisplay: React.FC = () => {
   );
 };
 
-export default StoryDisplay;
+export default 故事顯示;

@@ -5,7 +5,7 @@ import { useGame } from '../context/GameContext';
 import { getRandomZhuaZhouItems, getStoryNode } from '../data/storyData';
 import { Book, Briefcase, Award } from 'lucide-react';
 
-// 根据物品ID选择对应的图标
+// 根据物品ID選擇對應的圖標
 const getItemIcon = (itemId: string) => {
   switch (itemId) {
     case 'book':
@@ -17,23 +17,23 @@ const getItemIcon = (itemId: string) => {
   }
 };
 
-const ZhuaZhouActivity: React.FC = () => {
+const 抓周活動: React.FC = () => {
   const { setCurrentNode, updateStat, increaseAge } = useGame();
   const [items, setItems] = useState<any[]>([]);
   
   useEffect(() => {
-    // 在组件加载时，获取随机的抓周物品
+    // 在組件載入時，獲取随機的抓周物品
     setItems(getRandomZhuaZhouItems(3));
   }, []);
 
   const handleItemSelected = (item: any) => {
-    // 记录选择的天赦
+    // 記錄選擇的天賦
     console.log(`選擇了: ${item.name}, 天賦: ${item.talent}`);
     
-    // 进入下一年
+    // 進入下一年
     increaseAge(1);
     
-    // 跳转到下一个故事节点
+    // 跳轉到下一個故事節點
     const nextNode = getStoryNode('year_two');
     setCurrentNode(nextNode);
   };
@@ -60,4 +60,4 @@ const ZhuaZhouActivity: React.FC = () => {
   );
 };
 
-export default ZhuaZhouActivity;
+export default 抓周活動;

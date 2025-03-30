@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
 import { useGame } from '../context/GameContext';
 
-const CloseButton: React.FC = () => {
+const 關閉按鈕: React.FC = () => {
   const { toggleInventory } = useGame();
 
   return (
@@ -18,4 +18,4 @@ const CloseButton: React.FC = () => {
   );
 };
 
-export default CloseButton;
+export default 關閉按鈕;

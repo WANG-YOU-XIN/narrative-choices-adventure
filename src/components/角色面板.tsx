@@ -3,7 +3,7 @@ import React from 'react';
 import { useGame } from '../context/GameContext';
 import { UserRound, User } from 'lucide-react';
 
-const CharacterPanel: React.FC = () => {
+const 角色面板: React.FC = () => {
   const { characterName, characterGender, characterAge } = useGame();
   
   return (
@@ -17,4 +17,4 @@ const CharacterPanel: React.FC = () => {
   );
 };
 
-export default CharacterPanel;
+export default 角色面板;

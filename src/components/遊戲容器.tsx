@@ -1,17 +1,17 @@
 
 import React from 'react';
 import { useGame } from '../context/GameContext';
-import StoryDisplay from './StoryDisplay';
-import ChoiceOptions from './ChoiceOptions';
-import InventoryButton from './InventoryButton';
-import InventoryGrid from './InventoryGrid';
-import CharacterStats from './CharacterStats';
-import CharacterPanel from './CharacterPanel';
-import CloseButton from './CloseButton';
+import 故事顯示 from './故事顯示';
+import 選項按鈕 from './選項按鈕';
+import 物品欄按鈕 from './物品欄按鈕';
+import 物品欄 from './物品欄';
+import 角色屬性 from './角色屬性';
+import 角色面板 from './角色面板';
+import 關閉按鈕 from './關閉按鈕';
 import CharacterCreation from './CharacterCreation';
-import AgeDisplay from './AgeDisplay';
+import 年齡顯示 from './年齡顯示';
 
-const GameContainer: React.FC = () => {
+const 遊戲容器: React.FC = () => {
   const { isInventoryOpen, gameStarted } = useGame();
 
   // If game hasn't started, show character creation
@@ -30,33 +30,33 @@ const GameContainer: React.FC = () => {
         // Story mode view
         <>
           <div className="flex-1 p-4">
-            <AgeDisplay />
-            <StoryDisplay />
+            <年齡顯示 />
+            <故事顯示 />
           </div>
           <div className="p-4 pb-20">
-            <ChoiceOptions />
+            <選項按鈕 />
           </div>
-          <InventoryButton />
+          <物品欄按鈕 />
         </>
       ) : (
         // Inventory mode view
         <>
           <div className="flex flex-row h-1/2">
             <div className="w-1/2 p-4">
-              <CharacterStats />
+              <角色屬性 />
             </div>
             <div className="w-1/2 p-4">
-              <CharacterPanel />
+              <角色面板 />
             </div>
           </div>
           <div className="h-1/2">
-            <InventoryGrid />
+            <物品欄 />
           </div>
-          <CloseButton />
+          <關閉按鈕 />
         </>
       )}
     </div>
   );
 };
 
-export default GameContainer;
+export default 遊戲容器;

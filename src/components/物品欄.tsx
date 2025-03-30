@@ -3,7 +3,7 @@ import React from 'react';
 import { useGame } from '../context/GameContext';
 import { useToast } from '@/hooks/use-toast';
 
-const InventoryGrid: React.FC = () => {
+const 物品欄: React.FC = () => {
   const { inventory, removeFromInventory, characterStats, updateStat } = useGame();
   const { toast } = useToast();
 
@@ -59,4 +59,4 @@ const InventoryGrid: React.FC = () => {
   );
 };
 
-export default InventoryGrid;
+export default 物品欄;

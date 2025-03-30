@@ -3,14 +3,14 @@ import React from 'react';
 import { useGame } from '../context/GameContext';
 import { getStoryNode, getItem } from '../data/storyData';
 import { Button } from '@/components/ui/button';
-import ZhuaZhouActivity from './ZhuaZhouActivity';
+import 抓周活動 from './抓周活動';
 
-const ChoiceOptions: React.FC = () => {
+const 選項按鈕: React.FC = () => {
   const { currentNode, setCurrentNode, addToInventory, updateStat, increaseAge } = useGame();
 
-  // 检查是否是抓周节点
+  // 檢查是否是抓周節點
   if (currentNode.id === 'zhuazhou') {
-    return <ZhuaZhouActivity />;
+    return <抓周活動 />;
   }
 
   const handleChoice = (choiceIndex: number) => {
@@ -59,4 +59,4 @@ const ChoiceOptions: React.FC = () => {
   );
 };
 
-export default ChoiceOptions;
+export default 選項按鈕;

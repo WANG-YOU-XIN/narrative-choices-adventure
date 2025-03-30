@@ -2,7 +2,7 @@
 import React from 'react';
 import { useGame } from '../context/GameContext';
 
-const CharacterStats: React.FC = () => {
+const 角色屬性: React.FC = () => {
   const { characterStats } = useGame();
   
   const statLabels = {
@@ -30,4 +30,4 @@ const CharacterStats: React.FC = () => {
   );
 };
 
-export default CharacterStats;
+export default 角色屬性;

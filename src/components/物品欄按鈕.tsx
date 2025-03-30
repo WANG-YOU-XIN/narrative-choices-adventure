@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Backpack } from 'lucide-react';
 import { useGame } from '../context/GameContext';
 
-const InventoryButton: React.FC = () => {
+const 物品欄按鈕: React.FC = () => {
   const { toggleInventory } = useGame();
 
   return (
@@ -17,4 +17,4 @@ const InventoryButton: React.FC = () => {
   );
 };
 
-export default InventoryButton;
+export default 物品欄按鈕;
