@@ -8,16 +8,29 @@ import InventoryGrid from './InventoryGrid';
 import CharacterStats from './CharacterStats';
 import CharacterPanel from './CharacterPanel';
 import CloseButton from './CloseButton';
+import CharacterCreation from './CharacterCreation';
+import AgeDisplay from './AgeDisplay';
 
 const GameContainer: React.FC = () => {
-  const { isInventoryOpen } = useGame();
+  const { isInventoryOpen, gameStarted } = useGame();
 
+  // If game hasn't started, show character creation
+  if (!gameStarted) {
+    return (
+      <div className="flex flex-col w-full h-full max-w-md mx-auto bg-black text-white relative">
+        <CharacterCreation />
+      </div>
+    );
+  }
+
+  // Game has started
   return (
     <div className="flex flex-col w-full h-full max-w-md mx-auto bg-black text-white relative">
       {!isInventoryOpen ? (
         // Story mode view
         <>
           <div className="flex-1 p-4">
+            <AgeDisplay />
             <StoryDisplay />
           </div>
           <div className="p-4 pb-20">

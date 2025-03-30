@@ -16,6 +16,7 @@ export interface Effect {
   itemId?: string;
   statName?: keyof CharacterStats;
   value?: number;
+  ageChange?: number;  // Added to track age changes
 }
 
 export interface InventoryItem {

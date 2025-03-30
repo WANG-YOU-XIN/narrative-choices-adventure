@@ -13,6 +13,12 @@ interface GameContextType {
   updateStat: (statName: keyof CharacterStats, value: number) => void;
   isInventoryOpen: boolean;
   toggleInventory: () => void;
+  characterName: string;
+  characterGender: 'male' | 'female';
+  characterAge: number;
+  gameStarted: boolean;
+  startGame: (name: string, gender: 'male' | 'female') => void;
+  increaseAge: (years: number) => void;
 }
 
 const defaultStats: CharacterStats = {
@@ -20,7 +26,7 @@ const defaultStats: CharacterStats = {
   defense: 8,
   agility: 5,
   speed: 7,
-  health: 100
+  health: 25 // Initial health as per requirements
 };
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -30,10 +36,17 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [characterStats, setCharacterStats] = useState<CharacterStats>(defaultStats);
   const [isInventoryOpen, setIsInventoryOpen] = useState(false);
+  const [characterName, setCharacterName] = useState('');
+  const [characterGender, setCharacterGender] = useState<'male' | 'female'>('male');
+  const [characterAge, setCharacterAge] = useState(0); // Starting at age 0
+  const [gameStarted, setGameStarted] = useState(false);
 
   const addToInventory = (item: InventoryItem) => {
     if (inventory.length < 15) {
-      setInventory([...inventory, item]);
+      // Check if the item already exists in inventory
+      if (!inventory.some(existingItem => existingItem.id === item.id)) {
+        setInventory([...inventory, item]);
+      }
     }
   };
 
@@ -52,6 +65,31 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setIsInventoryOpen(!isInventoryOpen);
   };
 
+  const startGame = (name: string, gender: 'male' | 'female') => {
+    setCharacterName(name);
+    setCharacterGender(gender);
+    setGameStarted(true);
+    setCharacterAge(0); // Start at age 0
+  };
+
+  const increaseAge = (years: number) => {
+    const newAge = characterAge + years;
+    setCharacterAge(newAge);
+    
+    // Health scaling with age until 15 years
+    if (newAge <= 15) {
+      // Calculate new health based on age
+      const scaledHealth = 25 + Math.floor((newAge / 15) * 75);
+      // Only update health if it's increasing
+      if (scaledHealth > characterStats.health) {
+        setCharacterStats(prev => ({
+          ...prev,
+          health: scaledHealth
+        }));
+      }
+    }
+  };
+
   return (
     <GameContext.Provider
       value={{
@@ -63,7 +101,13 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         characterStats,
         updateStat,
         isInventoryOpen,
-        toggleInventory
+        toggleInventory,
+        characterName,
+        characterGender,
+        characterAge,
+        gameStarted,
+        startGame,
+        increaseAge
       }}
     >
       {children}

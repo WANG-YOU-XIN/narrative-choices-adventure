@@ -5,14 +5,14 @@ import { getStoryNode, getItem } from '../data/storyData';
 import { Button } from '@/components/ui/button';
 
 const ChoiceOptions: React.FC = () => {
-  const { currentNode, setCurrentNode, addToInventory, updateStat } = useGame();
+  const { currentNode, setCurrentNode, addToInventory, updateStat, increaseAge } = useGame();
 
   const handleChoice = (choiceIndex: number) => {
     const choice = currentNode.choices[choiceIndex];
     
     // Handle any effects from the choice
     if (choice.effect) {
-      const { type, itemId, statName, value } = choice.effect;
+      const { type, itemId, statName, value, ageChange } = choice.effect;
       
       if (type === 'addItem' && itemId) {
         const item = getItem(itemId);
@@ -25,6 +25,11 @@ const ChoiceOptions: React.FC = () => {
         }
       } else if (type === 'updateStat' && statName && value) {
         updateStat(statName, value);
+      }
+      
+      // Handle age progression
+      if (ageChange && ageChange > 0) {
+        increaseAge(ageChange);
       }
     }
     
