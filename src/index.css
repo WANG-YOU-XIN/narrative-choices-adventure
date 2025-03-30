@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -96,6 +97,58 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-black text-white m-0 p-0;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
+}
+
+.inventory-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.inventory-slot {
+  aspect-ratio: 1/1;
+  border: 2px solid theme('colors.game.border');
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.story-text {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: theme('colors.game.accent') transparent;
+}
+
+.story-text::-webkit-scrollbar {
+  width: 6px;
+}
+
+.story-text::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.story-text::-webkit-scrollbar-thumb {
+  background-color: theme('colors.game.accent');
+  border-radius: 3px;
+}
+
+.choice-button {
+  transition: all 0.2s ease;
+}
+
+.choice-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.character-stats {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px;
 }
