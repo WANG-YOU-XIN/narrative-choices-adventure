@@ -1,220 +1,145 @@
-
 import { StoryNode, InventoryItem } from '../types/game.types';
 
 export const initialStory: StoryNode = {
-  id: 'start',
-  text: '你醒來發現自己身處在一個陌生的房間。昏暗的光線中，你看到門口和一個老舊的衣櫃。你該怎麼做？',
+  id: 'birth',
+  text: '一個由人類所生的嬰兒出生了。你的人生故事即將開始。',
   choices: [
     {
-      text: '調查房間',
-      nextNode: 'investigate_room'
-    },
-    {
-      text: '嘗試開門',
-      nextNode: 'try_door'
-    },
-    {
-      text: '檢查衣櫃',
-      nextNode: 'check_wardrobe'
+      text: '開始人生旅程',
+      nextNode: 'year_one',
+      effect: {
+        type: 'updateStat',
+        ageChange: 1
+      }
     }
   ]
 };
 
+export const zhuaZhouItems = [
+  { id: 'book', name: '書本', talent: '學術', icon: '📚' },
+  { id: 'pen', name: '筆', talent: '文學', icon: '✒️' },
+  { id: 'abacus', name: '算盤', talent: '數學', icon: '🧮' },
+  { id: 'money', name: '錢幣', talent: '財富', icon: '💰' },
+  { id: 'rice', name: '米', talent: '不愁吃穿', icon: '🍚' },
+  { id: 'ruler', name: '尺', talent: '工程', icon: '📏' },
+  { id: 'scissors', name: '剪刀', talent: '手工藝', icon: '✂️' },
+  { id: 'paint', name: '顏料', talent: '藝術', icon: '🎨' },
+  { id: 'ball', name: '球', talent: '運動', icon: '⚽' },
+  { id: 'medicine', name: '藥', talent: '醫學', icon: '💊' },
+  { id: 'microphone', name: '麥克風', talent: '音樂', icon: '🎤' },
+  { id: 'shield', name: '盾牌', talent: '軍事', icon: '🛡️' },
+  { id: 'computer', name: '電腦', talent: '科技', icon: '💻' },
+  { id: 'plant', name: '植物', talent: '農業', icon: '🌱' },
+  { id: 'crown', name: '皇冠', talent: '領導', icon: '👑' }
+];
+
 export const storyNodes: Record<string, StoryNode> = {
-  'start': initialStory,
-  'investigate_room': {
-    id: 'investigate_room',
-    text: '你環顧四周，發現床頭櫃上有一把鑰匙和一張紙條。紙條上寫著：「離開前，確保你有準備好面對外面的危險。」',
+  'birth': initialStory,
+  'year_one': {
+    id: 'year_one',
+    text: '在��的第一年，家人為你舉行了抓週儀式。桌上擺放著各種物品，你要選擇一樣，這將決定你未來的天賦。',
     choices: [
       {
-        text: '拿取鑰匙',
-        nextNode: 'take_key',
+        text: '參加抓週儀式',
+        nextNode: 'zhuazhou'
+      }
+    ]
+  },
+  'zhuazhou': {
+    id: 'zhuazhou',
+    text: '現在是傳統的抓週儀式時刻。你面前擺放著三件物品，你會選擇哪一個？',
+    choices: [
+      {
+        text: '暫時由系統產生',
+        nextNode: 'year_two',
         effect: {
-          type: 'addItem',
-          itemId: 'key'
+          type: 'updateStat',
+          ageChange: 1
         }
-      },
-      {
-        text: '返回',
-        nextNode: 'start'
       }
     ]
   },
-  'take_key': {
-    id: 'take_key',
-    text: '你拿起鑰匙，它看起來可以打開這個房間的門。',
+  'year_two': {
+    id: 'year_two',
+    text: '你已經兩歲了，大部分時間都在睡覺和吃飯。今天，你感到有點困了。',
     choices: [
       {
-        text: '嘗試開門',
-        nextNode: 'try_door_with_key'
-      },
-      {
-        text: '檢查衣櫃',
-        nextNode: 'check_wardrobe'
-      }
-    ]
-  },
-  'try_door': {
-    id: 'try_door',
-    text: '門被鎖住了，你需要找到鑰匙。',
-    choices: [
-      {
-        text: '調查房間',
-        nextNode: 'investigate_room'
-      },
-      {
-        text: '檢查衣櫃',
-        nextNode: 'check_wardrobe'
-      }
-    ]
-  },
-  'try_door_with_key': {
-    id: 'try_door_with_key',
-    text: '你用鑰匙打開了門，外面是一條長廊。遠處傳來奇怪的聲音。',
-    choices: [
-      {
-        text: '向聲音方向探索',
-        nextNode: 'explore_sound'
-      },
-      {
-        text: '沿著走廊前進',
-        nextNode: 'corridor'
-      },
-      {
-        text: '返回房間',
-        nextNode: 'start'
-      }
-    ]
-  },
-  'check_wardrobe': {
-    id: 'check_wardrobe',
-    text: '衣櫃裡掛著一些舊衣服，底部有一個小盒子。',
-    choices: [
-      {
-        text: '檢查小盒子',
-        nextNode: 'check_box'
-      },
-      {
-        text: '返回',
-        nextNode: 'start'
-      }
-    ]
-  },
-  'check_box': {
-    id: 'check_box',
-    text: '你打開小盒子，裡面有一把小刀和一瓶藥水。',
-    choices: [
-      {
-        text: '拿取小刀',
-        nextNode: 'take_knife',
+        text: '睡覺',
+        nextNode: 'year_three',
         effect: {
-          type: 'addItem',
-          itemId: 'knife'
+          type: 'updateStat',
+          ageChange: 1
         }
+      }
+    ]
+  },
+  'year_three': {
+    id: 'year_three',
+    text: '你已經三歲了！今天，你的家人決定帶你去遊樂園玩。在那裡，你想要玩什麼？',
+    choices: [
+      {
+        text: '旋轉木馬',
+        nextNode: 'carousel',
       },
       {
-        text: '拿取藥水',
-        nextNode: 'take_potion',
+        text: '摩天輪',
+        nextNode: 'ferris_wheel',
+      },
+      {
+        text: '碰碰車',
+        nextNode: 'bumper_cars',
+      }
+    ]
+  },
+  'carousel': {
+    id: 'carousel',
+    text: '你選擇了旋轉木馬。坐在華麗的木馬上，隨著音樂上下起伏，你感到無比快樂。',
+    choices: [
+      {
+        text: '回家',
+        nextNode: 'after_amusement_park',
         effect: {
-          type: 'addItem',
-          itemId: 'potion'
+          type: 'updateStat',
+          ageChange: 1
         }
-      },
-      {
-        text: '返回',
-        nextNode: 'check_wardrobe'
       }
     ]
   },
-  'take_knife': {
-    id: 'take_knife',
-    text: '你拿起小刀，感覺自己的攻擊力提升了。',
+  'ferris_wheel': {
+    id: 'ferris_wheel',
+    text: '你選擇了摩天輪。在高處，你看到了整個遊樂園的美景，這讓你充滿了對世界的好奇。',
     choices: [
       {
-        text: '拿取藥水',
-        nextNode: 'take_potion_after_knife',
+        text: '回家',
+        nextNode: 'after_amusement_park',
         effect: {
-          type: 'addItem',
-          itemId: 'potion'
+          type: 'updateStat',
+          ageChange: 1
         }
-      },
-      {
-        text: '返回房間',
-        nextNode: 'start'
       }
     ]
   },
-  'take_potion': {
-    id: 'take_potion',
-    text: '你拿起藥水，它看起來可以恢復一些生命值。',
+  'bumper_cars': {
+    id: 'bumper_cars',
+    text: '你選擇了碰碰車。雖然還小，但在父母的協助下，你體驗了碰撞的刺激和快感。',
     choices: [
       {
-        text: '拿取小刀',
-        nextNode: 'take_knife_after_potion',
+        text: '回家',
+        nextNode: 'after_amusement_park',
         effect: {
-          type: 'addItem',
-          itemId: 'knife'
+          type: 'updateStat',
+          ageChange: 1
         }
-      },
-      {
-        text: '返回房間',
-        nextNode: 'start'
       }
     ]
   },
-  'take_potion_after_knife': {
-    id: 'take_potion_after_knife',
-    text: '你同時拿了小刀和藥水，現在可以返回房間了。',
+  'after_amusement_park': {
+    id: 'after_amusement_park',
+    text: '遊樂園的一天結束了，你在回家的路上睡著了。這是個美好的一天。',
     choices: [
       {
-        text: '返回房間',
-        nextNode: 'start'
-      }
-    ]
-  },
-  'take_knife_after_potion': {
-    id: 'take_knife_after_potion',
-    text: '你同時拿了藥水和小刀，現在可以返回房間了。',
-    choices: [
-      {
-        text: '返回房間',
-        nextNode: 'start'
-      }
-    ]
-  },
-  'explore_sound': {
-    id: 'explore_sound',
-    text: '你小心翼翼地朝聲音方向前進，發現一個戴著斗篷的人影站在走廊盡頭。',
-    choices: [
-      {
-        text: '靠近那個人',
-        nextNode: 'approach_figure'
-      },
-      {
-        text: '躲起來觀察',
-        nextNode: 'hide_and_watch'
-      },
-      {
-        text: '返回',
-        nextNode: 'try_door_with_key'
-      }
-    ]
-  },
-  'corridor': {
-    id: 'corridor',
-    text: '你沿著走廊前進，發現了一扇通往庭院的門和一個通往地下室的樓梯。',
-    choices: [
-      {
-        text: '前往庭院',
-        nextNode: 'garden'
-      },
-      {
-        text: '下樓梯',
-        nextNode: 'basement'
-      },
-      {
-        text: '返回',
-        nextNode: 'try_door_with_key'
+        text: '繼續故事',
+        nextNode: 'start',
       }
     ]
   }
@@ -275,4 +200,15 @@ export const getStoryNode = (nodeId: string): StoryNode => {
 
 export const getItem = (itemId: string): InventoryItem | undefined => {
   return gameItems[itemId];
+};
+
+export const getRandomZhuaZhouItems = (count: number = 3): any[] => {
+  const shuffled = [...zhuaZhouItems];
+  
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  
+  return shuffled.slice(0, count);
 };

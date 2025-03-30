@@ -3,9 +3,15 @@ import React from 'react';
 import { useGame } from '../context/GameContext';
 import { getStoryNode, getItem } from '../data/storyData';
 import { Button } from '@/components/ui/button';
+import ZhuaZhouActivity from './ZhuaZhouActivity';
 
 const ChoiceOptions: React.FC = () => {
   const { currentNode, setCurrentNode, addToInventory, updateStat, increaseAge } = useGame();
+
+  // 检查是否是抓周节点
+  if (currentNode.id === 'zhuazhou') {
+    return <ZhuaZhouActivity />;
+  }
 
   const handleChoice = (choiceIndex: number) => {
     const choice = currentNode.choices[choiceIndex];

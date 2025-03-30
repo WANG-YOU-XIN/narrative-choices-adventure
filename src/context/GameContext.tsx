@@ -70,6 +70,7 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setCharacterGender(gender);
     setGameStarted(true);
     setCharacterAge(0); // Start at age 0
+    setCurrentNode(initialStory); // 确保从初始节点开始
   };
 
   const increaseAge = (years: number) => {
