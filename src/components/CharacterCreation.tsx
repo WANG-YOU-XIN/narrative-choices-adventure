@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { useGame } from '../context/GameContext';
-import { Male, Female, Plus, Minus } from 'lucide-react';
+import { User, UserRound, Plus, Minus } from 'lucide-react';
 
 const CharacterCreation: React.FC = () => {
   const { startGame, updateStat } = useGame();
@@ -180,13 +180,13 @@ const CharacterCreation: React.FC = () => {
             <div className="flex items-center space-x-2">
               <RadioGroupItem id="male" value="male" />
               <Label htmlFor="male" className="flex items-center gap-1 text-game-text">
-                <Male size={20} /> 男性
+                <User size={20} /> 男性
               </Label>
             </div>
             <div className="flex items-center space-x-2">
               <RadioGroupItem id="female" value="female" />
               <Label htmlFor="female" className="flex items-center gap-1 text-game-text">
-                <Female size={20} /> 女性
+                <UserRound size={20} /> 女性
               </Label>
             </div>
           </RadioGroup>
