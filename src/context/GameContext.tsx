@@ -25,11 +25,11 @@ interface GameContextType {
 }
 
 const defaultStats: CharacterStats = {
-  attack: 5,
-  constitution: 5,
-  agility: 5,
-  defense: 5,  // Changed from physique to defense
-  intelligence: 5,
+  attack: 0,
+  constitution: 0,
+  agility: 0,
+  defense: 0,  // Changed from physique to defense
+  intelligence: 0,
   speed: 7,
   health: 25
 };
