@@ -44,4 +44,4 @@ const AttributeAllocation: React.FC = () => {
   );
 };
 
-export default AttributeAllocation;
+export default 屬性點分配;
