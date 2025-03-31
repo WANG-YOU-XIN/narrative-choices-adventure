@@ -83,41 +83,32 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setCharacterStats(defaultStats);
   };
 
-  const checkDeathConditions = (age: number): boolean => {
+ const checkDeathConditions = (age: number): boolean => {
     let isDead = false;
     
-    // Check constitution for death if it's less than or equal to 2
+    // 檢查體質是否小於等於 2
     if (characterStats.constitution <= 2) {
-      const random = Math.floor(Math.random() * 100) + 1;
-      
-      if (age === 1 && random <= 90) {
-        setDeathReason("體弱多病，夭折死亡");
-        isDead = true;
-      }
-      
-      if (!isDead && age > 1 && age % 5 === 0 && random <= 50) {
-        setDeathReason("體弱多病，不幸去世");
-        isDead = true;
-      }
+        const random = Math.floor(Math.random() * 100) + 1;
+        
+        if (age === 1 && random <= 90) {
+            setDeathReason("體弱多病，夭折死亡");
+            isDead = true;
+        }
     }
     
-    // Check intelligence for death if it's less than or equal to 2 and not already dead
+    // 檢查智力是否小於等於 2（且還沒死）
     if (!isDead && characterStats.intelligence <= 2) {
-      const random = Math.floor(Math.random() * 100) + 1;
-      
-      if (age === 1 && random <= 90) {
-        setDeathReason("大腦萎縮，夭折死亡");
-        isDead = true;
-      }
-      
-      if (!isDead && age > 1 && age % 5 === 0 && random <= 50) {
-        setDeathReason("太傻把自己撞死");
-        isDead = true;
-      }
+        const random = Math.floor(Math.random() * 100) + 1;
+        
+        if (age === 1 && random <= 90) {
+            setDeathReason("大腦萎縮，夭折死亡");
+            isDead = true;
+        }
     }
     
     return isDead;
-  };
+};
+
 
   const increaseAge = (years: number) => {
     const newAge = characterAge + years;
