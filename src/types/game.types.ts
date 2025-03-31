@@ -38,4 +38,5 @@ export interface CharacterStats {
   intelligence: number; // 智力
   speed: number;     // 攻速 (unchanged)
   health: number;    // 血量 (unchanged)
+  defense: number;   // 防禦 (added to fix the error)
 }
