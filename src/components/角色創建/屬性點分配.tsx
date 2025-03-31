@@ -1,9 +1,8 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { Plus, Minus } from 'lucide-react';
 
-interface Props {
+interface AttributeProps {
   stats: {
     attack: number;
     constitution: number;
@@ -15,50 +14,129 @@ interface Props {
   onStatChange: (stat: keyof typeof stats, value: number) => void;
 }
 
-const 屬性點分配: React.FC<Props> = ({ stats, remainingPoints, onStatChange }) => {
+const 屬性點分配: React.FC<AttributeProps> = ({ stats, remainingPoints, onStatChange }) => {
   return (
-    <div className="p-6 bg-gray-900 rounded-lg mb-6">
-      <div className="flex justify-between mb-4">
-        <h2 className="text-xl font-bold text-white">屬性點數分配</h2>
+    <div className="p-4 bg-gray-900 rounded-lg mb-4">
+      <h2 className="text-xl font-bold mb-4 text-center">屬性點分配</h2>
+      <div className="text-center mb-4">
         <span className="text-yellow-400">剩餘點數: {remainingPoints}</span>
       </div>
       
       <div className="space-y-4">
-        {Object.entries(stats).map(([stat, value]) => (
-          <div key={stat} className="flex items-center justify-between">
-            <span className="text-white capitalize w-24">
-              {stat === 'attack' && '攻擊'}
-              {stat === 'constitution' && '體質'}
-              {stat === 'agility' && '敏捷'}
-              {stat === 'defense' && '防禦'}
-              {stat === 'intelligence' && '智力'}
-            </span>
-            
-            <div className="flex items-center">
-              <Button 
-                variant="outline" 
-                size="icon"
-                className="h-8 w-8 rounded-full"
-                onClick={() => onStatChange(stat as keyof typeof stats, -1)}
-                disabled={value <= 0}
-              >
-                <Minus className="h-4 w-4" />
-              </Button>
-              
-              <span className="mx-3 text-white min-w-8 text-center">{value}</span>
-              
-              <Button 
-                variant="outline" 
-                size="icon"
-                className="h-8 w-8 rounded-full"
-                onClick={() => onStatChange(stat as keyof typeof stats, 1)}
-                disabled={remainingPoints <= 0}
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
-            </div>
+        {/* 攻擊 */}
+        <div className="flex items-center justify-between">
+          <span>攻擊: {stats.attack}</span>
+          <div className="flex space-x-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => onStatChange('attack', -1)} 
+              disabled={stats.attack <= 0}
+            >
+              -
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => onStatChange('attack', 1)} 
+              disabled={remainingPoints <= 0}
+            >
+              +
+            </Button>
           </div>
-        ))}
+        </div>
+        
+        {/* 體質 */}
+        <div className="flex items-center justify-between">
+          <span>體質: {stats.constitution}</span>
+          <div className="flex space-x-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => onStatChange('constitution', -1)} 
+              disabled={stats.constitution <= 0}
+            >
+              -
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => onStatChange('constitution', 1)} 
+              disabled={remainingPoints <= 0}
+            >
+              +
+            </Button>
+          </div>
+        </div>
+        
+        {/* 敏捷 */}
+        <div className="flex items-center justify-between">
+          <span>敏捷: {stats.agility}</span>
+          <div className="flex space-x-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => onStatChange('agility', -1)} 
+              disabled={stats.agility <= 0}
+            >
+              -
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => onStatChange('agility', 1)} 
+              disabled={remainingPoints <= 0}
+            >
+              +
+            </Button>
+          </div>
+        </div>
+        
+        {/* 防禦 */}
+        <div className="flex items-center justify-between">
+          <span>防禦: {stats.defense}</span>
+          <div className="flex space-x-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => onStatChange('defense', -1)} 
+              disabled={stats.defense <= 0}
+            >
+              -
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => onStatChange('defense', 1)} 
+              disabled={remainingPoints <= 0}
+            >
+              +
+            </Button>
+          </div>
+        </div>
+        
+        {/* 智力 */}
+        <div className="flex items-center justify-between">
+          <span>智力: {stats.intelligence}</span>
+          <div className="flex space-x-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => onStatChange('intelligence', -1)} 
+              disabled={stats.intelligence <= 0}
+            >
+              -
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => onStatChange('intelligence', 1)} 
+              disabled={remainingPoints <= 0}
+            >
+              +
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );

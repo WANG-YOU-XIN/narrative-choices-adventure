@@ -20,7 +20,7 @@ const 選項按鈕: React.FC = () => {
   useEffect(() => {
     // Check if we're on the check_constitution node
     if (currentNode.id === 'check_constitution') {
-      // Check if constitution is less than 2 and run random check
+      // Check if constitution is less than or equal to 2 and run random check
       const canContinue = checkConstitution(characterStats.constitution);
       
       if (!canContinue) {
