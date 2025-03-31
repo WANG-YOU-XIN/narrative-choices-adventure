@@ -10,11 +10,11 @@ const CharacterCreation: React.FC = () => {
   const [gender, setGender] = useState<'male' | 'female'>('male');
   const [remainingPoints, setRemainingPoints] = useState(20);
   const [stats, setStats] = useState({
-    attack: 5,
-    constitution: 5,
-    agility: 5,
-    defense: 5,
-    intelligence: 5
+    attack: 0,
+    constitution: 0,
+    agility: 0,
+    defense: 0,
+    intelligence: 0
   });
 
   const handleStatChange = (stat: keyof typeof stats, value: number) => {
