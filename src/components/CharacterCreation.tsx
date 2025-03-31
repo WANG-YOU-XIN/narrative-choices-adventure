@@ -11,14 +11,16 @@ const CharacterCreation: React.FC = () => {
   const { startGame, updateStat } = useGame();
   const [name, setName] = useState('');
   const [gender, setGender] = useState<'male' | 'female'>('male');
-  const [remainingPoints, setRemainingPoints] = useState(10);
+  const [remainingPoints, setRemainingPoints] = useState(20); // Changed to 20 initial points
   const [stats, setStats] = useState({
     attack: 0,
-    defense: 0,
-    agility: 0
+    constitution: 0,
+    agility: 0,
+    physique: 0,
+    intelligence: 0
   });
 
-  const handleStatChange = (stat: 'attack' | 'defense' | 'agility', value: number) => {
+  const handleStatChange = (stat: keyof typeof stats, value: number) => {
     // Only allow changes if we have points left or we're decreasing a stat
     if ((remainingPoints > 0 || value < 0) && (stats[stat] > 0 || value > 0)) {
       const newStats = { ...stats };
@@ -48,9 +50,9 @@ const CharacterCreation: React.FC = () => {
     }
     
     // Apply stats to the game
-    updateStat('attack', stats.attack);
-    updateStat('defense', stats.defense);
-    updateStat('agility', stats.agility);
+    Object.entries(stats).forEach(([stat, value]) => {
+      updateStat(stat as keyof typeof stats, value);
+    });
     
     // Start the game with character info
     startGame(name, gender);
@@ -91,27 +93,27 @@ const CharacterCreation: React.FC = () => {
             </div>
           </div>
           
-          {/* Defense stat */}
+          {/* Constitution stat */}
           <div className="flex flex-col items-center">
-            <span className="text-game-text">防禦</span>
+            <span className="text-game-text">體質</span>
             <div className="flex items-center mt-1">
               <Button 
                 type="button" 
                 variant="outline" 
                 size="icon"
                 className="h-8 w-8" 
-                onClick={() => handleStatChange('defense', -1)}
-                disabled={stats.defense <= 0}
+                onClick={() => handleStatChange('constitution', -1)}
+                disabled={stats.constitution <= 0}
               >
                 <Minus className="h-4 w-4" />
               </Button>
-              <span className="mx-2 text-game-text text-lg font-bold">{stats.defense}</span>
+              <span className="mx-2 text-game-text text-lg font-bold">{stats.constitution}</span>
               <Button 
                 type="button" 
                 variant="outline" 
                 size="icon"
                 className="h-8 w-8" 
-                onClick={() => handleStatChange('defense', 1)}
+                onClick={() => handleStatChange('constitution', 1)}
                 disabled={remainingPoints <= 0}
               >
                 <Plus className="h-4 w-4" />
@@ -146,11 +148,67 @@ const CharacterCreation: React.FC = () => {
               </Button>
             </div>
           </div>
+
+          {/* Physique stat */}
+          <div className="flex flex-col items-center mt-3">
+            <span className="text-game-text">體格</span>
+            <div className="flex items-center mt-1">
+              <Button 
+                type="button" 
+                variant="outline" 
+                size="icon"
+                className="h-8 w-8" 
+                onClick={() => handleStatChange('physique', -1)}
+                disabled={stats.physique <= 0}
+              >
+                <Minus className="h-4 w-4" />
+              </Button>
+              <span className="mx-2 text-game-text text-lg font-bold">{stats.physique}</span>
+              <Button 
+                type="button" 
+                variant="outline" 
+                size="icon"
+                className="h-8 w-8" 
+                onClick={() => handleStatChange('physique', 1)}
+                disabled={remainingPoints <= 0}
+              >
+                <Plus className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+
+          {/* Intelligence stat */}
+          <div className="flex flex-col items-center mt-3">
+            <span className="text-game-text">智力</span>
+            <div className="flex items-center mt-1">
+              <Button 
+                type="button" 
+                variant="outline" 
+                size="icon"
+                className="h-8 w-8" 
+                onClick={() => handleStatChange('intelligence', -1)}
+                disabled={stats.intelligence <= 0}
+              >
+                <Minus className="h-4 w-4" />
+              </Button>
+              <span className="mx-2 text-game-text text-lg font-bold">{stats.intelligence}</span>
+              <Button 
+                type="button" 
+                variant="outline" 
+                size="icon"
+                className="h-8 w-8" 
+                onClick={() => handleStatChange('intelligence', 1)}
+                disabled={remainingPoints <= 0}
+              >
+                <Plus className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
         </div>
         
         <div className="flex justify-around mt-4">
           <div className="text-game-text">
-            <span className="font-medium">攻速:</span> 1.0 (固定)
+            <span className="font-medium">攻速:</span> 7 (固定)
           </div>
           <div className="text-game-text">
             <span className="font-medium">血量:</span> 25 (固定)
@@ -178,14 +236,14 @@ const CharacterCreation: React.FC = () => {
             onValueChange={(value) => setGender(value as 'male' | 'female')}
           >
             <div className="flex items-center space-x-2">
-              <RadioGroupItem id="male" value="male" />
-              <Label htmlFor="male" className="flex items-center gap-1 text-game-text">
+              <RadioGroupItem id="male" value="male" className="text-white border-white" />
+              <Label htmlFor="male" className="flex items-center gap-1 text-white">
                 <User size={20} /> 男性
               </Label>
             </div>
             <div className="flex items-center space-x-2">
-              <RadioGroupItem id="female" value="female" />
-              <Label htmlFor="female" className="flex items-center gap-1 text-game-text">
+              <RadioGroupItem id="female" value="female" className="text-white border-white" />
+              <Label htmlFor="female" className="flex items-center gap-1 text-white">
                 <UserRound size={20} /> 女性
               </Label>
             </div>

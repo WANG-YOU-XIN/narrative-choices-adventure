@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { StoryNode, InventoryItem, CharacterStats } from '../types/game.types';
 import { initialStory } from '../data/storyData';
@@ -22,11 +21,13 @@ interface GameContextType {
 }
 
 const defaultStats: CharacterStats = {
-  attack: 10,
-  defense: 8,
-  agility: 5,
+  attack: 0,
+  constitution: 0,
+  agility: 0,
+  physique: 0,
+  intelligence: 0,
   speed: 7,
-  health: 25 // Initial health as per requirements
+  health: 25
 };
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -38,12 +39,11 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [isInventoryOpen, setIsInventoryOpen] = useState(false);
   const [characterName, setCharacterName] = useState('');
   const [characterGender, setCharacterGender] = useState<'male' | 'female'>('male');
-  const [characterAge, setCharacterAge] = useState(0); // Starting at age 0
+  const [characterAge, setCharacterAge] = useState(0);
   const [gameStarted, setGameStarted] = useState(false);
 
   const addToInventory = (item: InventoryItem) => {
     if (inventory.length < 15) {
-      // Check if the item already exists in inventory
       if (!inventory.some(existingItem => existingItem.id === item.id)) {
         setInventory([...inventory, item]);
       }
@@ -69,19 +69,16 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setCharacterName(name);
     setCharacterGender(gender);
     setGameStarted(true);
-    setCharacterAge(0); // Start at age 0
-    setCurrentNode(initialStory); // 确保从初始节点开始
+    setCharacterAge(0);
+    setCurrentNode(initialStory);
   };
 
   const increaseAge = (years: number) => {
     const newAge = characterAge + years;
     setCharacterAge(newAge);
     
-    // Health scaling with age until 15 years
     if (newAge <= 15) {
-      // Calculate new health based on age
       const scaledHealth = 25 + Math.floor((newAge / 15) * 75);
-      // Only update health if it's increasing
       if (scaledHealth > characterStats.health) {
         setCharacterStats(prev => ({
           ...prev,

@@ -31,9 +31,11 @@ export interface InventoryItem {
 }
 
 export interface CharacterStats {
-  attack: number;
-  defense: number;
-  agility: number;
-  speed: number;
-  health: number;
+  attack: number;    // 攻擊
+  constitution: number; // 體質
+  agility: number;   // 敏捷
+  physique: number;  // 體格
+  intelligence: number; // 智力
+  speed: number;     // 攻速 (unchanged)
+  health: number;    // 血量 (unchanged)
 }

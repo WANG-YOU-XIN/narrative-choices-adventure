@@ -3,7 +3,7 @@ import React from 'react';
 import { Button } from "@/components/ui/button";
 import { useGame } from '../context/GameContext';
 import { Gamepad2 } from 'lucide-react';
-import { useToast } from "@/components/ui/toast";
+import { useToast } from "@/hooks/use-toast";
 
 const 遊戲捷徑: React.FC = () => {
   const { startGame, gameStarted } = useGame();

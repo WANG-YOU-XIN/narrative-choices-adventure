@@ -7,8 +7,10 @@ const 角色屬性: React.FC = () => {
   
   const statLabels = {
     attack: '攻擊',
-    defense: '防禦',
+    constitution: '體質',
     agility: '敏捷',
+    physique: '體格',
+    intelligence: '智力',
     speed: '攻速',
     health: '血量'
   };
