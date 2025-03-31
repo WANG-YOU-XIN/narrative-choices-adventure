@@ -13,7 +13,7 @@ const CharacterCreation: React.FC = () => {
     attack: 0,
     constitution: 0,
     agility: 0,
-    physique: 0,
+    defense: 0,
     intelligence: 0
   });
 

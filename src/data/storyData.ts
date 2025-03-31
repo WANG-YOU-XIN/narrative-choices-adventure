@@ -37,10 +37,20 @@ export const storyNodes: Record<string, StoryNode> = {
   'birth': initialStory,
   'year_one': {
     id: 'year_one',
-    text: '在��的第一年，家人為你舉行了抓週儀式。桌上擺放著各種物品，你要選擇一樣，這將決定你未來的天賦。',
+    text: '在你的第一年，家人為你舉行了抓週儀式。桌上擺放著各種物品，你要選擇一樣，這將決定你未來的天賦。',
     choices: [
       {
         text: '參加抓週儀式',
+        nextNode: 'check_constitution'
+      }
+    ]
+  },
+  'check_constitution': {
+    id: 'check_constitution',
+    text: '家人正在為抓週儀式做準備...',
+    choices: [
+      {
+        text: '繼續',
         nextNode: 'zhuazhou'
       }
     ]
@@ -211,4 +221,15 @@ export const getRandomZhuaZhouItems = (count: number = 3): any[] => {
   }
   
   return shuffled.slice(0, count);
+};
+
+export const checkConstitution = (constitution: number): boolean => {
+  if (constitution < 2) {
+    // Generate random number between 1-100
+    const random = Math.floor(Math.random() * 100) + 1;
+    // If number is less than 10, continue to zhuazhou
+    return random < 10;
+  }
+  // Always continue if constitution >= 2
+  return true;
 };

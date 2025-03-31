@@ -9,7 +9,7 @@ const 角色屬性: React.FC = () => {
     attack: '攻擊',
     constitution: '體質',
     agility: '敏捷',
-    physique: '體格',
+    defense: '防禦',
     intelligence: '智力',
     speed: '攻速',
     health: '血量'

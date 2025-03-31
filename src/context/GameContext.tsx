@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { StoryNode, InventoryItem, CharacterStats } from '../types/game.types';
 import { initialStory } from '../data/storyData';
@@ -24,7 +25,7 @@ const defaultStats: CharacterStats = {
   attack: 0,
   constitution: 0,
   agility: 0,
-  physique: 0,
+  defense: 0,  // Changed from physique to defense
   intelligence: 0,
   speed: 7,
   health: 25

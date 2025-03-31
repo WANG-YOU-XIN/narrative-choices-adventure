@@ -8,7 +8,7 @@ interface StatPointAllocationProps {
     attack: number;
     constitution: number;
     agility: number;
-    physique: number;
+    defense: number;
     intelligence: number;
   };
   remainingPoints: number;
@@ -110,27 +110,27 @@ const 屬性點分配: React.FC<StatPointAllocationProps> = ({
           </div>
         </div>
 
-        {/* Physique stat */}
+        {/* Defense stat - changed from physique */}
         <div className="flex flex-col items-center mt-3">
-          <span className="text-game-text">體格</span>
+          <span className="text-game-text">防禦</span>
           <div className="flex items-center mt-1">
             <Button 
               type="button" 
               variant="outline" 
               size="icon"
               className="h-8 w-8" 
-              onClick={() => onStatChange('physique', -1)}
-              disabled={stats.physique <= 0}
+              onClick={() => onStatChange('defense', -1)}
+              disabled={stats.defense <= 0}
             >
               <Minus className="h-4 w-4" />
             </Button>
-            <span className="mx-2 text-game-text text-lg font-bold">{stats.physique}</span>
+            <span className="mx-2 text-game-text text-lg font-bold">{stats.defense}</span>
             <Button 
               type="button" 
               variant="outline" 
               size="icon"
               className="h-8 w-8" 
-              onClick={() => onStatChange('physique', 1)}
+              onClick={() => onStatChange('defense', 1)}
               disabled={remainingPoints <= 0}
             >
               <Plus className="h-4 w-4" />

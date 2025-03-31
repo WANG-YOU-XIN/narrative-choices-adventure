@@ -1,12 +1,33 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useGame } from '../context/GameContext';
-import { getStoryNode, getItem } from '../data/storyData';
+import { getStoryNode, getItem, checkConstitution } from '../data/storyData';
 import { Button } from '@/components/ui/button';
 import 抓周活動 from './抓周活動';
 
 const 選項按鈕: React.FC = () => {
-  const { currentNode, setCurrentNode, addToInventory, updateStat, increaseAge } = useGame();
+  const { currentNode, setCurrentNode, addToInventory, updateStat, increaseAge, characterName, characterStats } = useGame();
+
+  useEffect(() => {
+    // Check if we're on the check_constitution node
+    if (currentNode.id === 'check_constitution') {
+      // Check if constitution is less than 2 and run random check
+      const canContinue = checkConstitution(characterStats.constitution);
+      
+      if (!canContinue) {
+        // If check fails, skip to year_two
+        const nextNode = getStoryNode('year_two');
+        setCurrentNode(nextNode);
+        increaseAge(1); // Increase age since we're skipping to year 2
+      }
+    }
+  }, [currentNode.id, characterStats.constitution, setCurrentNode, increaseAge]);
+
+  // Replace placeholder text with character name in story text
+  let displayText = currentNode.text;
+  if (characterName) {
+    displayText = displayText.replace('你', characterName);
+  }
 
   // 檢查是否是抓周節點
   if (currentNode.id === 'zhuazhou') {
