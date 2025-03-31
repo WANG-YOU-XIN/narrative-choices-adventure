@@ -6,7 +6,16 @@ import { Button } from '@/components/ui/button';
 import 抓周活動 from './抓周活動';
 
 const 選項按鈕: React.FC = () => {
-  const { currentNode, setCurrentNode, addToInventory, updateStat, increaseAge, characterName, characterStats } = useGame();
+  const { 
+    currentNode, 
+    setCurrentNode, 
+    addToInventory, 
+    updateStat, 
+    increaseAge, 
+    characterName, 
+    characterStats, 
+    isGameOver 
+  } = useGame();
 
   useEffect(() => {
     // Check if we're on the check_constitution node
@@ -22,6 +31,11 @@ const 選項按鈕: React.FC = () => {
       }
     }
   }, [currentNode.id, characterStats.constitution, setCurrentNode, increaseAge]);
+
+  // Don't render choices if game is over
+  if (isGameOver) {
+    return null;
+  }
 
   // Replace placeholder text with character name in story text
   let displayText = currentNode.text;

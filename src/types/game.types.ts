@@ -39,3 +39,10 @@ export interface CharacterStats {
   speed: number;     // 攻速 (unchanged)
   health: number;    // 血量 (unchanged)
 }
+
+// New interface for death condition
+export interface DeathCondition {
+  type: 'constitution' | 'intelligence';
+  age: number;
+  message: string;
+}

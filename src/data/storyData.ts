@@ -131,7 +131,7 @@ export const storyNodes: Record<string, StoryNode> = {
   },
   'bumper_cars': {
     id: 'bumper_cars',
-    text: '你選擇了碰碰車。雖然還小，但在父母的協助下，你體驗了碰撞的刺激和快感。',
+    text: '你選擇了碰碰車。雖然還小，但在父母的協助下，你體驗了碰撞的刺激和快���。',
     choices: [
       {
         text: '回家',
@@ -227,8 +227,8 @@ export const checkConstitution = (constitution: number): boolean => {
   if (constitution < 2) {
     // Generate random number between 1-100
     const random = Math.floor(Math.random() * 100) + 1;
-    // If number is less than 10, continue to zhuazhou
-    return random < 10;
+    // If number is less than 10, continue to zhuazhou (10% chance)
+    return random <= 10;
   }
   // Always continue if constitution >= 2
   return true;

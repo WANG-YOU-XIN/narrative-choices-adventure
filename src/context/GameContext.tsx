@@ -1,6 +1,5 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { StoryNode, InventoryItem, CharacterStats } from '../types/game.types';
+import { StoryNode, InventoryItem, CharacterStats, DeathCondition } from '../types/game.types';
 import { initialStory } from '../data/storyData';
 
 interface GameContextType {
@@ -19,6 +18,9 @@ interface GameContextType {
   gameStarted: boolean;
   startGame: (name: string, gender: 'male' | 'female') => void;
   increaseAge: (years: number) => void;
+  isGameOver: boolean;
+  deathReason: string | null;
+  resetGame: () => void;
 }
 
 const defaultStats: CharacterStats = {
@@ -42,6 +44,8 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [characterGender, setCharacterGender] = useState<'male' | 'female'>('male');
   const [characterAge, setCharacterAge] = useState(0);
   const [gameStarted, setGameStarted] = useState(false);
+  const [isGameOver, setIsGameOver] = useState(false);
+  const [deathReason, setDeathReason] = useState<string | null>(null);
 
   const addToInventory = (item: InventoryItem) => {
     if (inventory.length < 15) {
@@ -72,13 +76,58 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setGameStarted(true);
     setCharacterAge(0);
     setCurrentNode(initialStory);
+    setIsGameOver(false);
+    setDeathReason(null);
+    setInventory([]);
+    setCharacterStats(defaultStats);
+  };
+
+  const checkDeathConditions = (age: number): boolean => {
+    // Check constitution for death at age 1 and every 5 years
+    if (characterStats.constitution < 2) {
+      const random = Math.floor(Math.random() * 100) + 1;
+      
+      if (age === 1 && random <= 90) {
+        setDeathReason("體弱多病，夭折死亡");
+        return true;
+      }
+      
+      if (age > 1 && age % 5 === 0 && random <= 50) {
+        setDeathReason("體弱多病，不幸去世");
+        return true;
+      }
+    }
+    
+    // Check intelligence for death at age 1 and every 5 years
+    if (characterStats.intelligence < 2) {
+      const random = Math.floor(Math.random() * 100) + 1;
+      
+      if (age === 1 && random <= 90) {
+        setDeathReason("大腦萎縮，夭折死亡");
+        return true;
+      }
+      
+      if (age > 1 && age % 5 === 0 && random <= 50) {
+        setDeathReason("太傻把自己撞死");
+        return true;
+      }
+    }
+    
+    return false;
   };
 
   const increaseAge = (years: number) => {
     const newAge = characterAge + years;
     setCharacterAge(newAge);
     
-    if (newAge <= 15) {
+    // Check for death conditions
+    const isDead = checkDeathConditions(newAge);
+    if (isDead) {
+      setIsGameOver(true);
+    }
+    
+    // Update health based on age (only if still alive)
+    if (!isDead && newAge <= 15) {
       const scaledHealth = 25 + Math.floor((newAge / 15) * 75);
       if (scaledHealth > characterStats.health) {
         setCharacterStats(prev => ({
@@ -87,6 +136,15 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         }));
       }
     }
+  };
+
+  const resetGame = () => {
+    setGameStarted(false);
+    setIsGameOver(false);
+    setDeathReason(null);
+    setCharacterAge(0);
+    setCharacterStats(defaultStats);
+    setInventory([]);
   };
 
   return (
@@ -106,7 +164,10 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         characterAge,
         gameStarted,
         startGame,
-        increaseAge
+        increaseAge,
+        isGameOver,
+        deathReason,
+        resetGame
       }}
     >
       {children}

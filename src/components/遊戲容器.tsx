@@ -10,9 +10,10 @@ import 角色面板 from './角色面板';
 import 關閉按鈕 from './關閉按鈕';
 import CharacterCreation from './CharacterCreation';
 import 年齡顯示 from './年齡顯示';
+import GameOver from './GameOver';
 
 const 遊戲容器: React.FC = () => {
-  const { isInventoryOpen, gameStarted } = useGame();
+  const { isInventoryOpen, gameStarted, isGameOver } = useGame();
 
   // If game hasn't started, show character creation
   if (!gameStarted) {
@@ -23,7 +24,16 @@ const 遊戲容器: React.FC = () => {
     );
   }
 
-  // Game has started
+  // If game is over, show death screen
+  if (isGameOver) {
+    return (
+      <div className="flex flex-col w-full h-full max-w-md mx-auto bg-black text-white relative">
+        <GameOver />
+      </div>
+    );
+  }
+
+  // Game has started and is not over
   return (
     <div className="flex flex-col w-full h-full max-w-md mx-auto bg-black text-white relative">
       {!isInventoryOpen ? (
