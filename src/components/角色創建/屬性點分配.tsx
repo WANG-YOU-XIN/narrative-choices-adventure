@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from "@/components/ui/button";
 
@@ -14,7 +15,7 @@ interface AttributeProps {
 }
 
 const AttributeAllocation: React.FC<AttributeProps> = ({ stats, remainingPoints, onStatChange }) => {
-  const attributes: { key: keyof AttributeProps["stats"]; label: string }[] = [
+  const attributes: { key: keyof typeof stats; label: string }[] = [
     { key: "attack", label: "攻擊" },
     { key: "constitution", label: "體質" },
     { key: "agility", label: "敏捷" },

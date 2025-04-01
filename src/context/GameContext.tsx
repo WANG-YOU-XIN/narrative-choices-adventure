@@ -91,24 +91,27 @@ const updateStat = (statName: keyof CharacterStats, value: number) => {
  const checkDeathConditions = (age: number): boolean => {
     let isDead = false;
     
-    // 檢查體質是否小於等於 2
-    if (characterStats.constitution <= 2) {
+    // 只在1歲時檢查死亡條件
+    if (age === 1) {
+      // 檢查體質是否小於等於 2
+      if (characterStats.constitution <= 2) {
         const random = Math.floor(Math.random() * 100) + 1;
         
-        if (age === 1 && random <= 90) {
-            setDeathReason("體弱多病，夭折死亡");
-            isDead = true;
+        if (random <= 90) {
+          setDeathReason("體弱多病，夭折死亡");
+          isDead = true;
         }
-    }
-    
-    // 檢查智力是否小於等於 2（且還沒死）
-    if (!isDead && characterStats.intelligence <= 2) {
+      }
+      
+      // 如果沒有因為體質而死亡，檢查智力是否小於等於 2
+      if (!isDead && characterStats.intelligence <= 2) {
         const random = Math.floor(Math.random() * 100) + 1;
         
-        if (age === 1 && random <= 90) {
-            setDeathReason("大腦萎縮，夭折死亡");
-            isDead = true;
+        if (random <= 90) {
+          setDeathReason("大腦萎縮，夭折死亡");
+          isDead = true;
         }
+      }
     }
     
     return isDead;
