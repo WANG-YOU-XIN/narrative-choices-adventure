@@ -54,13 +54,18 @@ const CharacterCreation: React.FC = () => {
       return;
     }
     
-    // Apply stats to the game
-    Object.entries(stats).forEach(([stat, value]) => {
-      updateStat(stat as keyof typeof stats, value);
-    });
+    console.log("Starting game with stats:", stats);
     
-    // Start the game with character info
+    // Start the game first to initialize game state
     startGame(name, gender);
+    
+    // Apply stats to the game after initialization
+    Object.entries(stats).forEach(([stat, value]) => {
+      if (value > 0) {
+        console.log(`Updating ${stat} to ${value}`);
+        updateStat(stat as keyof typeof stats, value);
+      }
+    });
   };
 
   return (

@@ -60,17 +60,16 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setInventory(inventory.filter(item => item.id !== itemId));
   };
 
-const updateStat = (statName: keyof CharacterStats, value: number) => {
-  setCharacterStats(prev => {
-    const newStats = {
-      ...prev,
-      [statName]: prev[statName] + value
-    };
-    console.log("Updated Stats:", newStats);  // 確認新數值
-    return newStats;
-  });
-};
-
+  const updateStat = (statName: keyof CharacterStats, value: number) => {
+    setCharacterStats(prev => {
+      const newStats = {
+        ...prev,
+        [statName]: prev[statName] + value
+      };
+      console.log("Updated Stats:", newStats);
+      return newStats;
+    });
+  };
 
   const toggleInventory = () => {
     setIsInventoryOpen(!isInventoryOpen);
@@ -88,44 +87,55 @@ const updateStat = (statName: keyof CharacterStats, value: number) => {
     setCharacterStats(defaultStats);
   };
 
- const checkDeathConditions = (age: number): boolean => {
+  const checkDeathConditions = (age: number): boolean => {
     let isDead = false;
     
     // 只在1歲時檢查死亡條件
     if (age === 1) {
+      console.log("Checking death conditions at age 1");
+      console.log("Current stats:", characterStats);
+      
       // 檢查體質是否小於等於 2
       if (characterStats.constitution <= 2) {
         const random = Math.floor(Math.random() * 100) + 1;
+        console.log(`Constitution check: ${characterStats.constitution} <= 2, random: ${random}`);
         
         if (random <= 90) {
           setDeathReason("體弱多病，夭折死亡");
           isDead = true;
+          console.log("Death by constitution");
         }
       }
       
       // 如果沒有因為體質而死亡，檢查智力是否小於等於 2
       if (!isDead && characterStats.intelligence <= 2) {
         const random = Math.floor(Math.random() * 100) + 1;
+        console.log(`Intelligence check: ${characterStats.intelligence} <= 2, random: ${random}`);
         
         if (random <= 90) {
           setDeathReason("大腦萎縮，夭折死亡");
           isDead = true;
+          console.log("Death by intelligence");
         }
       }
     }
     
     return isDead;
-};
-
+  };
 
   const increaseAge = (years: number) => {
     const newAge = characterAge + years;
     setCharacterAge(newAge);
     
+    console.log(`Age increased to ${newAge}, checking death conditions...`);
+    
     // Check for death conditions
     const isDead = checkDeathConditions(newAge);
     if (isDead) {
+      console.log("Game over due to death condition");
       setIsGameOver(true);
+    } else {
+      console.log("Survived death check");
     }
     
     // Update health based on age (only if still alive)
