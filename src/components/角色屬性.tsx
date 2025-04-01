@@ -15,6 +15,11 @@ const 角色屬性: React.FC = () => {
     health: '血量'
   };
 
+useEffect(() => {
+  console.log("角色屬性變更:", characterStats);
+}, [characterStats]);
+
+  
   return (
     <div className="w-full p-4 bg-opacity-30 bg-gray-900 rounded-lg border border-game-border">
       <h2 className="text-xl text-game-text font-bold mb-4">角色屬性</h2>
