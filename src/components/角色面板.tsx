@@ -10,7 +10,7 @@ const 角色面板: React.FC = () => {
     attack: '攻擊',
     constitution: '體質',
     agility: '敏捷',
-    charm: '魅力',  // Changed from defense to charm
+    charm: '魅力',
     intelligence: '智力',
     speed: '攻速',
     health: '血量'
