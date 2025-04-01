@@ -1,7 +1,7 @@
 
 import React, { useEffect } from 'react';
 import { useGame } from '../context/GameContext';
-import { getStoryNode, getItem, checkConstitution } from '../data/storyData';
+import { getStoryNode, getItem, checkConstitution, getRandomScenarioForAge } from '../data/storyData';
 import { Button } from '@/components/ui/button';
 import 抓周活動 from './抓周活動';
 
@@ -13,7 +13,8 @@ const 選項按鈕: React.FC = () => {
     updateStat, 
     increaseAge, 
     characterName, 
-    characterStats, 
+    characterStats,
+    characterAge,
     isGameOver 
   } = useGame();
 
@@ -24,13 +25,34 @@ const 選項按鈕: React.FC = () => {
       const canContinue = checkConstitution(characterStats.constitution);
       
       if (!canContinue) {
-        // If check fails, skip to year_two
-        const nextNode = getStoryNode('year_two');
+        // If check fails, skip to age_progression
+        const nextNode = getStoryNode('age_progression');
         setCurrentNode(nextNode);
-        increaseAge(1); // Increase age since we're skipping to year 2
+        increaseAge(1); // Increase age since we're skipping ahead
       }
     }
-  }, [currentNode.id, characterStats.constitution, setCurrentNode, increaseAge]);
+    
+    // Handle random age scenarios when on age_progression node
+    if (currentNode.id === 'age_progression') {
+      // Get a random scenario for the current age if available
+      const scenario = getRandomScenarioForAge(characterAge);
+      
+      if (scenario) {
+        // Apply the stat effect from the scenario
+        if (scenario.effect && scenario.effect.statName && scenario.effect.value) {
+          updateStat(scenario.effect.statName, scenario.effect.value);
+        }
+        
+        // Update the story text to include the scenario
+        const updatedNode = { 
+          ...currentNode, 
+          text: `【年齡：${characterAge}歲】\n${scenario.text}`
+        };
+        
+        setCurrentNode(updatedNode);
+      }
+    }
+  }, [currentNode.id, characterAge, characterStats.constitution, setCurrentNode, increaseAge, updateStat]);
 
   // Don't render choices if game is over
   if (isGameOver) {
