@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { GameProvider } from './context/GameContext';
-import 遊戲容器 from './components/遊戲容器';
+import { GameProvider } from '../context/GameContext';
+import 遊戲容器 from './遊戲容器';
 import { Toaster } from "@/components/ui/toaster";
 
 const App: React.FC = () => {

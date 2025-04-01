@@ -1,4 +1,3 @@
-
 import { StoryNode, InventoryItem } from '../types/game.types';
 
 export const initialStory: StoryNode = {
@@ -186,10 +185,10 @@ export const gameItems: Record<string, InventoryItem> = {
   'shield': {
     id: 'shield',
     name: '盾牌',
-    description: '一面堅固的盾牌，提升防禦力。',
+    description: '一面堅固的盾牌，提升魅力。',
     icon: '🛡️',
     effect: {
-      statName: 'defense',
+      statName: 'charm',
       value: 8
     }
   },
