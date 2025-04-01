@@ -60,12 +60,17 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setInventory(inventory.filter(item => item.id !== itemId));
   };
 
-  const updateStat = (statName: keyof CharacterStats, value: number) => {
-    setCharacterStats(prev => ({
+const updateStat = (statName: keyof CharacterStats, value: number) => {
+  setCharacterStats(prev => {
+    const newStats = {
       ...prev,
       [statName]: prev[statName] + value
-    }));
-  };
+    };
+    console.log("Updated Stats:", newStats);  // 確認新數值
+    return newStats;
+  });
+};
+
 
   const toggleInventory = () => {
     setIsInventoryOpen(!isInventoryOpen);
