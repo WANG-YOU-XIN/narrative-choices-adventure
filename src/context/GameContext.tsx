@@ -22,16 +22,17 @@ interface GameContextType {
   isGameOver: boolean;
   deathReason: string | null;
   resetGame: () => void;
+  initialConstitution: number;
 }
 
 const defaultStats: CharacterStats = {
   attack: 0,
   constitution: 0,
   agility: 0,
-  defense: 0,  // Changed from physique to defense
+  charm: 0,  // Changed from defense to charm
   intelligence: 0,
-  speed: 7,
-  health: 25
+  speed: 1.0, // Changed from 7 to 1.0
+  health: 0  // Changed from 25 to 0, will be calculated based on constitution
 };
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -47,6 +48,7 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [gameStarted, setGameStarted] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
   const [deathReason, setDeathReason] = useState<string | null>(null);
+  const [initialConstitution, setInitialConstitution] = useState(0);
 
   const addToInventory = (item: InventoryItem) => {
     if (inventory.length < 15) {
@@ -62,10 +64,19 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const updateStat = (statName: keyof CharacterStats, value: number) => {
     setCharacterStats(prev => {
-      const newStats = {
-        ...prev,
-        [statName]: prev[statName] + value
-      };
+      const newStats = { ...prev };
+      
+      newStats[statName] = prev[statName] + value;
+      
+      // If constitution is updated, also update health (10 points per constitution)
+      if (statName === 'constitution') {
+        newStats.health = newStats.constitution * 10;
+        // Update initial constitution if the game hasn't started yet
+        if (!gameStarted) {
+          setInitialConstitution(newStats.constitution);
+        }
+      }
+      
       console.log("Updated Stats:", newStats);
       return newStats;
     });
@@ -84,7 +95,15 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setIsGameOver(false);
     setDeathReason(null);
     setInventory([]);
-    setCharacterStats(defaultStats);
+    
+    // Set initial constitution based on current constitution
+    setInitialConstitution(characterStats.constitution);
+    
+    // Set health based on constitution (10 points per constitution)
+    setCharacterStats(prev => ({
+      ...prev,
+      health: prev.constitution * 10
+    }));
   };
 
   const checkDeathConditions = (age: number): boolean => {
@@ -136,16 +155,14 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setIsGameOver(true);
     } else {
       console.log("Survived death check");
-    }
-    
-    // Update health based on age (only if still alive)
-    if (!isDead && newAge <= 15) {
-      const scaledHealth = 25 + Math.floor((newAge / 15) * 75);
-      if (scaledHealth > characterStats.health) {
+      
+      // Increase health based on initial constitution
+      if (!isDead) {
         setCharacterStats(prev => ({
           ...prev,
-          health: scaledHealth
+          health: prev.health + initialConstitution
         }));
+        console.log(`Health increased by ${initialConstitution} to ${characterStats.health + initialConstitution}`);
       }
     }
   };
@@ -157,6 +174,7 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setCharacterAge(0);
     setCharacterStats(defaultStats);
     setInventory([]);
+    setInitialConstitution(0);
   };
 
   return (
@@ -179,7 +197,8 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         increaseAge,
         isGameOver,
         deathReason,
-        resetGame
+        resetGame,
+        initialConstitution
       }}
     >
       {children}

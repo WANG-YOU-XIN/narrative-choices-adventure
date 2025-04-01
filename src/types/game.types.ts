@@ -34,7 +34,7 @@ export interface CharacterStats {
   attack: number;    // 攻擊
   constitution: number; // 體質
   agility: number;   // 敏捷
-  defense: number;   // 防禦 (changed from physique)
+  charm: number;     // 魅力 (changed from defense)
   intelligence: number; // 智力
   speed: number;     // 攻速 (unchanged)
   health: number;    // 血量 (unchanged)

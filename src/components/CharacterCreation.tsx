@@ -13,7 +13,7 @@ const CharacterCreation: React.FC = () => {
     attack: 0,
     constitution: 0,
     agility: 0,
-    defense: 0,
+    charm: 0, // Changed from defense to charm
     intelligence: 0
   });
 

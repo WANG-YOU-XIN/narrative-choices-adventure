@@ -7,7 +7,7 @@ interface AttributeProps {
     attack: number;
     constitution: number;
     agility: number;
-    defense: number;
+    charm: number;  // Changed from defense to charm
     intelligence: number;
   };
   remainingPoints: number;
@@ -19,7 +19,7 @@ const AttributeAllocation: React.FC<AttributeProps> = ({ stats, remainingPoints,
     { key: "attack", label: "攻擊" },
     { key: "constitution", label: "體質" },
     { key: "agility", label: "敏捷" },
-    { key: "defense", label: "防禦" },
+    { key: "charm", label: "魅力" },  // Changed from defense to charm
     { key: "intelligence", label: "智力" },
   ];
 

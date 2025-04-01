@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useGame } from '../context/GameContext';
 import { UserRound, User } from 'lucide-react';
@@ -9,7 +10,7 @@ const 角色面板: React.FC = () => {
     attack: '攻擊',
     constitution: '體質',
     agility: '敏捷',
-    defense: '防禦',
+    charm: '魅力',  // Changed from defense to charm
     intelligence: '智力',
     speed: '攻速',
     health: '血量'
