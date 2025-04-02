@@ -2,7 +2,13 @@
 import { StoryNode, InventoryItem } from '../types/game.types';
 import { initialStory, storyNodes, getStoryNode } from './initialStory';
 import { zhuaZhouItems, getRandomZhuaZhouItems } from './zhuaZhouItems';
-import { ageScenarios, getRandomScenarioForAge } from './ageScenarios';
+import { 
+  ageScenarios, 
+  getRandomScenarioForAge, 
+  AgeScenario, 
+  AgeScenarioChoice,
+  multiChoiceScenarios 
+} from './ageScenarios';
 import { gameItems, getItem } from './gameItems';
 import { checkConstitution } from './healthUtils';
 
@@ -14,8 +20,11 @@ export {
   zhuaZhouItems,
   getRandomZhuaZhouItems,
   ageScenarios,
+  multiChoiceScenarios,
   getRandomScenarioForAge,
   gameItems,
   getItem,
-  checkConstitution
+  checkConstitution,
+  AgeScenario,
+  AgeScenarioChoice
 };

@@ -4,6 +4,7 @@ import { useGame } from '../context/GameContext';
 import { getStoryNode, getItem, checkConstitution, getRandomScenarioForAge } from '../data/storyData';
 import { Button } from '@/components/ui/button';
 import 抓周活動 from './抓周活動';
+import { AgeScenario } from '../data/ageScenarios';
 
 const 選項按鈕: React.FC = () => {
   const { 
@@ -18,11 +19,15 @@ const 選項按鈕: React.FC = () => {
     isGameOver 
   } = useGame();
   const [hasProcessedAge, setHasProcessedAge] = useState(false);
+  const [currentAgeScenario, setCurrentAgeScenario] = useState<AgeScenario | null>(null);
+  const [showScenarioChoices, setShowScenarioChoices] = useState(false);
 
   useEffect(() => {
-    // Reset the processing flag when node changes
+    // Reset states when node changes (except for age_progression)
     if (currentNode.id !== 'age_progression') {
       setHasProcessedAge(false);
+      setCurrentAgeScenario(null);
+      setShowScenarioChoices(false);
     }
 
     // Check if we're on the check_constitution node
@@ -44,18 +49,33 @@ const 選項按鈕: React.FC = () => {
       const scenario = getRandomScenarioForAge(characterAge);
       
       if (scenario) {
-        // Apply the stat effect from the scenario
-        if (scenario.effect && scenario.effect.statName && scenario.effect.value) {
+        setCurrentAgeScenario(scenario);
+        
+        // If scenario has choices, show them instead of applying effect immediately
+        if (scenario.choices && scenario.choices.length > 0) {
+          setShowScenarioChoices(true);
+          
+          // Update the story text to include the scenario
+          const updatedNode = { 
+            ...currentNode, 
+            text: `【年齡：${characterAge}歲】\n${scenario.text}`
+          };
+          
+          setCurrentNode(updatedNode);
+        } 
+        // For regular scenarios (without choices), apply effect directly
+        else if (scenario.effect && scenario.effect.statName && scenario.effect.value) {
           updateStat(scenario.effect.statName, scenario.effect.value);
+          
+          // Update the story text to include the scenario
+          const updatedNode = { 
+            ...currentNode, 
+            text: `【年齡：${characterAge}歲】\n${scenario.text}`
+          };
+          
+          setCurrentNode(updatedNode);
         }
         
-        // Update the story text to include the scenario
-        const updatedNode = { 
-          ...currentNode, 
-          text: `【年齡：${characterAge}歲】\n${scenario.text}`
-        };
-        
-        setCurrentNode(updatedNode);
         setHasProcessedAge(true); // Mark this age as processed
       }
     }
@@ -77,6 +97,52 @@ const 選項按鈕: React.FC = () => {
     return <抓周活動 />;
   }
 
+  // If we're showing a scenario with multiple choices
+  if (showScenarioChoices && currentAgeScenario && currentAgeScenario.choices) {
+    return (
+      <div className="w-full flex flex-col space-y-4 p-4">
+        {currentAgeScenario.choices.map((choice, index) => (
+          <Button
+            key={index}
+            className="choice-button w-full text-lg py-4 bg-game-primary hover:bg-game-accent text-white"
+            onClick={() => {
+              // Apply the effect from the choice
+              if (choice.effect) {
+                updateStat(choice.effect.statName, choice.effect.value);
+              }
+              // Hide the choices after selection
+              setShowScenarioChoices(false);
+            }}
+          >
+            {choice.text}
+          </Button>
+        ))}
+      </div>
+    );
+  }
+
+  // If we're at age_progression and have processed the age scenario, 
+  // show a "Next Year" button to proceed to the next year
+  if (currentNode.id === 'age_progression' && hasProcessedAge) {
+    return (
+      <div className="w-full flex flex-col space-y-4 p-4">
+        <Button
+          className="choice-button w-full text-lg py-4 bg-game-primary hover:bg-game-accent text-white"
+          onClick={() => {
+            increaseAge(1);
+            setHasProcessedAge(false);
+            // Reset the current node to trigger a new age scenario
+            const nextNode = getStoryNode('age_progression');
+            setCurrentNode(nextNode);
+          }}
+        >
+          下一年
+        </Button>
+      </div>
+    );
+  }
+
+  // Regular choice buttons for story nodes
   const handleChoice = (choiceIndex: number) => {
     const choice = currentNode.choices[choiceIndex];
     

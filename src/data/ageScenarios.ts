@@ -1,13 +1,23 @@
-
 import { CharacterStats } from '../types/game.types';
 
-interface AgeScenario {
+interface AgeScenarioEffect {
+  statName: keyof CharacterStats;
+  value: number;
+}
+
+export interface AgeScenario {
   id: string;
   text: string;
-  effect: {
+  effect?: {
     statName: keyof CharacterStats;
     value: number;
   };
+  choices?: AgeScenarioChoice[];
+}
+
+export interface AgeScenarioChoice {
+  text: string;
+  effect: AgeScenarioEffect;
 }
 
 export const ageScenarios: Record<number, AgeScenario[]> = {
@@ -265,11 +275,84 @@ export const ageScenarios: Record<number, AgeScenario[]> = {
   ]
 };
 
-export const getRandomScenarioForAge = (age: number) => {
-  if (ageScenarios[age]) {
-    const scenarios = ageScenarios[age];
-    const randomIndex = Math.floor(Math.random() * scenarios.length);
-    return scenarios[randomIndex];
+export const multiChoiceScenarios: Record<number, AgeScenario[]> = {
+  4: [
+    {
+      id: 'age_4_choice',
+      text: '你的父母決定讓你開始學習一項技能，他們讓你在兩個選項之間做選擇。',
+      choices: [
+        {
+          text: '學習音樂',
+          effect: {
+            statName: 'charm',
+            value: 2
+          }
+        },
+        {
+          text: '學習運動',
+          effect: {
+            statName: 'constitution',
+            value: 2
+          }
+        }
+      ]
+    }
+  ],
+  8: [
+    {
+      id: 'age_8_choice',
+      text: '學校舉辦了一個特殊活動，你必須決定參加哪一個。',
+      choices: [
+        {
+          text: '參加科學競賽',
+          effect: {
+            statName: 'intelligence',
+            value: 3
+          }
+        },
+        {
+          text: '參加體育比賽',
+          effect: {
+            statName: 'agility',
+            value: 3
+          }
+        }
+      ]
+    }
+  ],
+  12: [
+    {
+      id: 'age_12_choice',
+      text: '你的朋友邀請你參加一個週末活動，但你只能選擇一個。',
+      choices: [
+        {
+          text: '去參加辯論俱樂部',
+          effect: {
+            statName: 'intelligence',
+            value: 2
+          }
+        },
+        {
+          text: '去參加戶外冒險',
+          effect: {
+            statName: 'constitution',
+            value: 2
+          }
+        }
+      ]
+    }
+  ]
+};
+
+export const getRandomScenarioForAge = (age: number): AgeScenario | null => {
+  const combinedScenarios = [
+    ...(ageScenarios[age] || []),
+    ...(multiChoiceScenarios[age] || [])
+  ];
+  
+  if (combinedScenarios.length > 0) {
+    const randomIndex = Math.floor(Math.random() * combinedScenarios.length);
+    return combinedScenarios[randomIndex];
   }
   return null;
 };
