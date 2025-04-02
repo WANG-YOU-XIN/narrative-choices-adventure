@@ -345,6 +345,34 @@ export const storyNodes: Record<string, StoryNode> = {
   }
 };
 
+export const getStoryNode = (nodeId: string): StoryNode => {
+  return storyNodes[nodeId] || initialStory;
+};
+
+export const getItem = (itemId: string): InventoryItem | undefined => {
+  return gameItems[itemId];
+};
+
+export const getRandomZhuaZhouItems = (count: number = 3): any[] => {
+  const shuffled = [...zhuaZhouItems];
+  
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  
+  return shuffled.slice(0, count);
+};
+
+export const checkConstitution = (constitution: number): boolean => {
+  // 只檢查體質是否小於等於 2，並根據 10% 的存活率來判定
+  if (constitution <= 2) {
+    const random = Math.floor(Math.random() * 100) + 1;
+    return random <= 10; // 10% 的機率為 true (存活)
+  }
+  return true; // 體質大於 2 時必定存活
+};
+
 export const gameItems: Record<string, InventoryItem> = {
   'key': {
     id: 'key',
@@ -392,32 +420,4 @@ export const gameItems: Record<string, InventoryItem> = {
       value: 6
     }
   }
-};
-
-export const getStoryNode = (nodeId: string): StoryNode => {
-  return storyNodes[nodeId] || initialStory;
-};
-
-export const getItem = (itemId: string): InventoryItem | undefined => {
-  return gameItems[itemId];
-};
-
-export const getRandomZhuaZhouItems = (count: number = 3): any[] => {
-  const shuffled = [...zhuaZhouItems];
-  
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  
-  return shuffled.slice(0, count);
-};
-
-export const checkConstitution = (constitution: number): boolean => {
-  // 只檢查體質是否小於等於 2，並根據 10% 的存活率來判定
-  if (constitution <= 2) {
-    const random = Math.floor(Math.random() * 100) + 1;
-    return random <= 10; // 10% 的機率為 true (存活)
-  }
-  return true; // 體質大於 2 時必定存活
 };
