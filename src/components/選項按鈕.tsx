@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useGame } from '../context/GameContext';
 import { getStoryNode, getItem, checkConstitution, getRandomScenarioForAge } from '../data/storyData';
 import { Button } from '@/components/ui/button';
@@ -17,8 +17,15 @@ const 選項按鈕: React.FC = () => {
     characterAge,
     isGameOver 
   } = useGame();
+  const [hasProcessedAge, setHasProcessedAge] = useState(false);
 
   useEffect(() => {
+    // Reset the processing flag when node changes
+    if (currentNode.id !== 'age_progression') {
+      setHasProcessedAge(false);
+      return;
+    }
+
     // Check if we're on the check_constitution node
     if (currentNode.id === 'check_constitution') {
       // Check if constitution is less than or equal to 2 and run random check
@@ -32,8 +39,8 @@ const 選項按鈕: React.FC = () => {
       }
     }
     
-    // Handle random age scenarios when on age_progression node
-    if (currentNode.id === 'age_progression') {
+    // Handle random age scenarios when on age_progression node and not already processed
+    if (currentNode.id === 'age_progression' && !hasProcessedAge) {
       // Get a random scenario for the current age if available
       const scenario = getRandomScenarioForAge(characterAge);
       
@@ -50,9 +57,10 @@ const 選項按鈕: React.FC = () => {
         };
         
         setCurrentNode(updatedNode);
+        setHasProcessedAge(true); // Mark this age as processed
       }
     }
-  }, [currentNode.id, characterAge, characterStats.constitution, setCurrentNode, increaseAge, updateStat]);
+  }, [currentNode.id, characterAge, characterStats.constitution, setCurrentNode, increaseAge, updateStat, hasProcessedAge]);
 
   // Don't render choices if game is over
   if (isGameOver) {
