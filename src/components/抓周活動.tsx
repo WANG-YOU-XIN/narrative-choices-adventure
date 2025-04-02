@@ -34,7 +34,7 @@ const 抓周活動: React.FC = () => {
     increaseAge(1);
     
     // 跳轉到下一個故事節點
-    const nextNode = getStoryNode('year_two');
+    const nextNode = getStoryNode('age_progression');
     setCurrentNode(nextNode);
   };
 
