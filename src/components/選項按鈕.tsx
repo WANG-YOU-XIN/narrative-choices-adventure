@@ -23,7 +23,6 @@ const 選項按鈕: React.FC = () => {
     // Reset the processing flag when node changes
     if (currentNode.id !== 'age_progression') {
       setHasProcessedAge(false);
-      return;
     }
 
     // Check if we're on the check_constitution node
