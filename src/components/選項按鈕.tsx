@@ -1,18 +1,19 @@
 
 import React, { useEffect, useState } from 'react';
 import { useGame } from '../context/GameContext';
-import { getStoryNode, getItem, checkConstitution, getRandomScenarioForAge } from '../data/storyData';
-import { Button } from '@/components/ui/button';
-import 抓周活動 from './抓周活動';
+import { getStoryNode, checkConstitution, getRandomScenarioForAge } from '../data/storyData';
 import { AgeScenario } from '../data/ageScenarios';
-import { toast } from "@/hooks/use-toast";
+import 抓周活動 from './抓周活動';
+
+// Import our new components
+import ScenarioChoices from './game/ScenarioChoices';
+import NextYearButton from './game/NextYearButton';
+import StoryChoices from './game/StoryChoices';
 
 const 選項按鈕: React.FC = () => {
   const { 
     currentNode, 
     setCurrentNode, 
-    addToInventory, 
-    updateStat, 
     increaseAge, 
     characterName, 
     characterStats,
@@ -20,6 +21,7 @@ const 選項按鈕: React.FC = () => {
     isGameOver,
     isInventoryOpen
   } = useGame();
+
   const [hasProcessedAge, setHasProcessedAge] = useState(false);
   const [currentAgeScenario, setCurrentAgeScenario] = useState<AgeScenario | null>(null);
   const [showScenarioChoices, setShowScenarioChoices] = useState(false);
@@ -103,27 +105,10 @@ const 選項按鈕: React.FC = () => {
     currentNode
   ]);
 
-  // Helper function to show toast notifications for stat changes
-  const showStatChangeToast = (statName: string, value: number) => {
-    const statDisplayNames: Record<string, string> = {
-      'attack': '攻擊',
-      'constitution': '體質',
-      'agility': '敏捷',
-      'charm': '魅力',
-      'intelligence': '智力',
-      'speed': '速度',
-      'health': '生命'
-    };
-
-    const displayName = statDisplayNames[statName] || statName;
-    const changeText = value > 0 ? `+${value}` : value;
-    const toastType = value > 0 ? '提升' : '降低';
-    
-    toast({
-      title: `${displayName}${toastType}`,
-      description: `${displayName}值${toastType}了 ${Math.abs(value)} 點`,
-      variant: value > 0 ? "default" : "destructive",
-    });
+  // Reset scenario states helper function
+  const resetScenario = () => {
+    setHasProcessedAge(false);
+    setIsRandomScenarioLoaded(false);
   };
 
   // Don't render choices if game is over
@@ -145,26 +130,10 @@ const 選項按鈕: React.FC = () => {
   // If we're showing a scenario with multiple choices
   if (showScenarioChoices && currentAgeScenario && currentAgeScenario.choices) {
     return (
-      <div className="w-full flex flex-col space-y-4 p-4">
-        {currentAgeScenario.choices.map((choice, index) => (
-          <Button
-            key={index}
-            className="choice-button w-full text-lg py-4 bg-game-primary hover:bg-game-accent text-white"
-            onClick={() => {
-              // Apply the effect from the choice
-              if (choice.effect) {
-                updateStat(choice.effect.statName, choice.effect.value);
-                // Show toast notification for stat change
-                showStatChangeToast(choice.effect.statName, choice.effect.value);
-              }
-              // Hide the choices after selection
-              setShowScenarioChoices(false);
-            }}
-          >
-            {choice.text}
-          </Button>
-        ))}
-      </div>
+      <ScenarioChoices 
+        currentAgeScenario={currentAgeScenario} 
+        onChoiceSelected={() => setShowScenarioChoices(false)} 
+      />
     );
   }
 
@@ -172,80 +141,15 @@ const 選項按鈕: React.FC = () => {
   // show a "Next Year" button to proceed to the next year
   if (isAgeProgressionNode && hasProcessedAge) {
     return (
-      <div className="w-full flex flex-col space-y-4 p-4">
-        <Button
-          className="choice-button w-full text-lg py-4 bg-game-primary hover:bg-game-accent text-white"
-          onClick={() => {
-            // Apply the scenario effect now (for scenarios without choices)
-            if (currentAgeScenario && currentAgeScenario.effect && !showScenarioChoices) {
-              updateStat(currentAgeScenario.effect.statName, currentAgeScenario.effect.value);
-              // Show toast notification for stat change
-              showStatChangeToast(currentAgeScenario.effect.statName, currentAgeScenario.effect.value);
-            }
-            
-            increaseAge(1);
-            setHasProcessedAge(false);
-            setIsRandomScenarioLoaded(false);
-            // Reset the current node to trigger a new age scenario
-            const nextNode = getStoryNode('age_progression');
-            setCurrentNode(nextNode);
-          }}
-        >
-          下一年
-        </Button>
-      </div>
+      <NextYearButton 
+        currentAgeScenario={currentAgeScenario} 
+        resetScenario={resetScenario} 
+      />
     );
   }
 
   // Regular choice buttons for story nodes
-  const handleChoice = (choiceIndex: number) => {
-    const choice = currentNode.choices[choiceIndex];
-    
-    // Handle any effects from the choice
-    if (choice.effect) {
-      const { type, itemId, statName, value, ageChange } = choice.effect;
-      
-      if (type === 'addItem' && itemId) {
-        const item = getItem(itemId);
-        if (item) {
-          addToInventory(item);
-          // If item has a stat effect, apply it
-          if (item.effect && item.effect.statName && item.effect.value) {
-            updateStat(item.effect.statName, item.effect.value);
-            // Show toast notification for stat change
-            showStatChangeToast(item.effect.statName, item.effect.value);
-          }
-        }
-      } else if (type === 'updateStat' && statName && value) {
-        updateStat(statName, value);
-        // Show toast notification for stat change
-        showStatChangeToast(statName, value);
-      }
-      
-      // Handle age progression
-      if (ageChange && ageChange > 0) {
-        increaseAge(ageChange);
-      }
-    }
-    
-    // Navigate to the next node
-    const nextNode = getStoryNode(choice.nextNode);
-    setCurrentNode(nextNode);
-  };
-
-  return (
-    <div className="w-full flex flex-col space-y-4 p-4">
-      {currentNode.choices.map((choice, index) => (
-        <Button
-          key={index}
-          className="choice-button w-full text-lg py-4 bg-game-primary hover:bg-game-accent text-white"
-          onClick={() => handleChoice(index)}
-        >
-          {choice.text}
-        </Button>
-      ))}
-    </div>
-  );
+  return <StoryChoices />;
 };
 
 export default 選項按鈕;
