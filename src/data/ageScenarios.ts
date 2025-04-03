@@ -1,3 +1,4 @@
+
 import { CharacterStats } from '../types/game.types';
 
 interface AgeScenarioEffect {
@@ -276,7 +277,209 @@ export const ageScenarios: Record<number, AgeScenario[]> = {
 };
 
 export const multiChoiceScenarios: Record<number, AgeScenario[]> = {
- 
+  2: [
+    {
+      id: 'age_2_food_choice',
+      text: '你剛學會走路，父母製作了美味的飯菜，放在桌上。你會選擇做什麼？',
+      choices: [
+        {
+          text: '自己爬上椅子嘗試拿取食物',
+          effect: {
+            statName: 'agility',
+            value: 2
+          }
+        },
+        {
+          text: '用語言表達想吃的意願',
+          effect: {
+            statName: 'intelligence',
+            value: 2
+          }
+        },
+        {
+          text: '耐心等待父母喂食',
+          effect: {
+            statName: 'constitution',
+            value: 1
+          }
+        }
+      ]
+    }
+  ],
+  4: [
+    {
+      id: 'age_4_playtime_choice',
+      text: '幼兒園開放日，你可以選擇一個活動參加。你最想參加哪一個？',
+      choices: [
+        {
+          text: '繪畫課程：學習用色彩表達',
+          effect: {
+            statName: 'charm',
+            value: 2
+          }
+        },
+        {
+          text: '積木挑戰：建構高塔',
+          effect: {
+            statName: 'intelligence',
+            value: 2
+          }
+        },
+        {
+          text: '體育活動：跑跳遊戲',
+          effect: {
+            statName: 'agility',
+            value: 2
+          }
+        }
+      ]
+    }
+  ],
+  6: [
+    {
+      id: 'age_6_school_choice',
+      text: '上學第一天，你走進教室發現同學們已經聚在一起。你會怎麼做？',
+      choices: [
+        {
+          text: '主動介紹自己給大家認識',
+          effect: {
+            statName: 'charm',
+            value: 3
+          }
+        },
+        {
+          text: '觀察一下情況再決定',
+          effect: {
+            statName: 'intelligence',
+            value: 2
+          }
+        },
+        {
+          text: '加入看起來最有趣的那群同學',
+          effect: {
+            statName: 'attack',
+            value: 1
+          }
+        }
+      ]
+    }
+  ],
+  8: [
+    {
+      id: 'age_8_challenge_choice',
+      text: '課堂上老師提出了一個挑戰，需要同學自願參加。你會怎麼做？',
+      choices: [
+        {
+          text: '迅速舉手，爭取機會',
+          effect: {
+            statName: 'attack',
+            value: 2
+          }
+        },
+        {
+          text: '思考策略後再舉手',
+          effect: {
+            statName: 'intelligence',
+            value: 3
+          }
+        },
+        {
+          text: '先觀察別人如何應對',
+          effect: {
+            statName: 'agility',
+            value: 1
+          }
+        }
+      ]
+    }
+  ],
+  10: [
+    {
+      id: 'age_10_friendship_choice',
+      text: '你發現好朋友與另一個同學發生爭執。你會怎麼處理？',
+      choices: [
+        {
+          text: '挺身而出，幫好朋友說話',
+          effect: {
+            statName: 'attack',
+            value: 2
+          }
+        },
+        {
+          text: '嘗試調解雙方，尋求和平解決',
+          effect: {
+            statName: 'charm',
+            value: 3
+          }
+        },
+        {
+          text: '仔細分析情況，給予客觀建議',
+          effect: {
+            statName: 'intelligence',
+            value: 2
+          }
+        }
+      ]
+    }
+  ],
+  12: [
+    {
+      id: 'age_12_hobby_choice',
+      text: '你有機會選擇一項課外活動參加。你會選擇什麼？',
+      choices: [
+        {
+          text: '參加體育隊，提升身體素質',
+          effect: {
+            statName: 'constitution',
+            value: 3
+          }
+        },
+        {
+          text: '加入科學社，鑽研實驗與理論',
+          effect: {
+            statName: 'intelligence',
+            value: 3
+          }
+        },
+        {
+          text: '選擇藝術類活動，發揮創意',
+          effect: {
+            statName: 'charm',
+            value: 3
+          }
+        }
+      ]
+    }
+  ],
+  14: [
+    {
+      id: 'age_14_stress_choice',
+      text: '面對即將到來的中考壓力，你選擇如何準備？',
+      choices: [
+        {
+          text: '制定嚴格計劃，全力以赴',
+          effect: {
+            statName: 'intelligence',
+            value: 4
+          }
+        },
+        {
+          text: '保持運動與學習平衡',
+          effect: {
+            statName: 'constitution',
+            value: 2
+          }
+        },
+        {
+          text: '尋求同學間的互助學習',
+          effect: {
+            statName: 'charm',
+            value: 2
+          }
+        }
+      ]
+    }
+  ]
 };
 
 export const getRandomScenarioForAge = (age: number): AgeScenario | null => {

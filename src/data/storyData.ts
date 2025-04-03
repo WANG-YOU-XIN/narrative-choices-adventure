@@ -5,14 +5,12 @@ import { zhuaZhouItems, getRandomZhuaZhouItems } from './zhuaZhouItems';
 import { 
   ageScenarios, 
   getRandomScenarioForAge, 
-  AgeScenario, 
-  AgeScenarioChoice,
   multiChoiceScenarios 
 } from './ageScenarios';
 import { gameItems, getItem } from './gameItems';
 import { checkConstitution } from './healthUtils';
 
-// Re-export everything for backward compatibility
+// Export everything for backward compatibility
 export {
   initialStory,
   storyNodes,
@@ -25,6 +23,7 @@ export {
   gameItems,
   getItem,
   checkConstitution,
-  AgeScenario,
-  AgeScenarioChoice
 };
+
+// Properly export types with 'export type'
+export type { AgeScenario, AgeScenarioChoice } from './ageScenarios';
