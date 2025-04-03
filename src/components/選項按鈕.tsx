@@ -1,11 +1,11 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useGame } from '../context/GameContext';
 import { getStoryNode, checkConstitution, getRandomScenarioForAge } from '../data/storyData';
 import { AgeScenario } from '../data/ageScenarios';
 import 抓周活動 from './抓周活動';
 
-// Import our new components
+// Import our components
 import ScenarioChoices from './game/ScenarioChoices';
 import NextYearButton from './game/NextYearButton';
 import StoryChoices from './game/StoryChoices';
@@ -22,18 +22,17 @@ const 選項按鈕: React.FC = () => {
     isInventoryOpen
   } = useGame();
 
-  const [hasProcessedAge, setHasProcessedAge] = useState(false);
-  const [currentAgeScenario, setCurrentAgeScenario] = useState<AgeScenario | null>(null);
+  // Use refs to maintain state between renders
+  const hasProcessedAgeRef = useRef(false);
+  const currentScenarioRef = useRef<AgeScenario | null>(null);
   const [showScenarioChoices, setShowScenarioChoices] = useState(false);
-  const [isRandomScenarioLoaded, setIsRandomScenarioLoaded] = useState(false);
-
-  // Use a separate state to track if we're on the age_progression node
+  const isScenarioLoadedRef = useRef(false);
+  
+  // Track node types
   const [isAgeProgressionNode, setIsAgeProgressionNode] = useState(false);
   const [isConstitutionCheckNode, setIsConstitutionCheckNode] = useState(false);
-
-  // Store the scenario in a ref to prevent it from changing when other state changes
-  const scenarioRef = React.useRef<AgeScenario | null>(null);
-
+  
+  // This effect sets up node type flags and handles constitution check
   useEffect(() => {
     // Update node type tracking states
     setIsAgeProgressionNode(currentNode.id === 'age_progression');
@@ -41,11 +40,10 @@ const 選項按鈕: React.FC = () => {
 
     // Only reset states when changing to a node that's not age_progression
     if (currentNode.id !== 'age_progression') {
-      setHasProcessedAge(false);
-      setCurrentAgeScenario(null);
-      scenarioRef.current = null;
+      hasProcessedAgeRef.current = false;
+      currentScenarioRef.current = null;
       setShowScenarioChoices(false);
-      setIsRandomScenarioLoaded(false);
+      isScenarioLoadedRef.current = false;
     }
 
     // Check if we're on the check_constitution node
@@ -62,70 +60,89 @@ const 選項按鈕: React.FC = () => {
     }
   }, [currentNode.id, characterStats.constitution]);
 
-  // Separate useEffect for handling random age scenarios to prevent re-triggering
+  // This effect handles loading scenarios only once
   useEffect(() => {
-    // Only process age scenarios when on age_progression node and inventory is not open
-    // Also only process if we haven't already loaded a scenario
-    if (isAgeProgressionNode && !hasProcessedAge && !isRandomScenarioLoaded) {
-      // Get a random scenario for the current age if available
-      const scenario = getRandomScenarioForAge(characterAge);
+    // Only process age scenarios when on age_progression node, 
+    // only do it once via ref, and don't re-process if we've already loaded a scenario
+    if (isAgeProgressionNode && !hasProcessedAgeRef.current && !isScenarioLoadedRef.current) {
+      // Check if we already have a stored scenario for this age in localStorage
+      const storageKey = `scenario_age_${characterAge}`;
+      const storedScenario = localStorage.getItem(storageKey);
       
-      if (scenario) {
-        setCurrentAgeScenario(scenario);
-        scenarioRef.current = scenario;
-        setIsRandomScenarioLoaded(true);
-        
-        // If scenario has choices, show them instead of applying effect immediately
-        if (scenario.choices && scenario.choices.length > 0) {
-          setShowScenarioChoices(true);
+      if (storedScenario) {
+        // Use the stored scenario
+        try {
+          const parsedScenario = JSON.parse(storedScenario);
+          currentScenarioRef.current = parsedScenario;
+          isScenarioLoadedRef.current = true;
           
-          // Update the story text to include the scenario
+          // If scenario has choices, show them
+          if (parsedScenario.choices && parsedScenario.choices.length > 0) {
+            setShowScenarioChoices(true);
+          }
+          
+          // Update the story text with stored scenario
           const updatedNode = { 
             ...currentNode, 
-            text: `【年齡：${characterAge}歲】\n${scenario.text}`
+            text: `【年齡：${characterAge}歲】\n${parsedScenario.text}`
           };
           
           setCurrentNode(updatedNode);
-        } 
-        // For regular scenarios (without choices), we'll show the scenario text
-        // but delay applying effects until user clicks "Next Year"
-        else {
-          // Update the story text to include the scenario
-          const updatedNode = { 
-            ...currentNode, 
-            text: `【年齡：${characterAge}歲】\n${scenario.text}`
-          };
-          
-          setCurrentNode(updatedNode);
+        } catch (e) {
+          console.error("Failed to parse stored scenario:", e);
+          // If parsing fails, get a new scenario
+          getAndSetNewScenario();
         }
-        
-        setHasProcessedAge(true);
+      } else {
+        // Get a new random scenario
+        getAndSetNewScenario();
       }
+      
+      hasProcessedAgeRef.current = true;
     }
-  }, [
-    isAgeProgressionNode, 
-    characterAge, 
-    hasProcessedAge, 
-    isRandomScenarioLoaded,
-    currentNode
-  ]);
+  }, [isAgeProgressionNode, characterAge, currentNode]);
+  
+  // Helper function to get and set a new scenario
+  const getAndSetNewScenario = () => {
+    const scenario = getRandomScenarioForAge(characterAge);
+    
+    if (scenario) {
+      // Save to ref and localStorage for persistence
+      currentScenarioRef.current = scenario;
+      isScenarioLoadedRef.current = true;
+      
+      const storageKey = `scenario_age_${characterAge}`;
+      localStorage.setItem(storageKey, JSON.stringify(scenario));
+      
+      // If scenario has choices, show them instead of applying effect immediately
+      if (scenario.choices && scenario.choices.length > 0) {
+        setShowScenarioChoices(true);
+      }
+      
+      // Update the story text to include the scenario
+      const updatedNode = { 
+        ...currentNode, 
+        text: `【年齡：${characterAge}歲】\n${scenario.text}`
+      };
+      
+      setCurrentNode(updatedNode);
+    }
+  };
 
   // Reset scenario states helper function
   const resetScenario = () => {
-    setHasProcessedAge(false);
-    setIsRandomScenarioLoaded(false);
-    scenarioRef.current = null;
+    hasProcessedAgeRef.current = false;
+    isScenarioLoadedRef.current = false;
+    currentScenarioRef.current = null;
+    
+    // Clear from localStorage when moving to next age
+    const storageKey = `scenario_age_${characterAge}`;
+    localStorage.removeItem(storageKey);
   };
 
   // Don't render choices if game is over
   if (isGameOver) {
     return null;
-  }
-
-  // Replace placeholder text with character name in story text
-  let displayText = currentNode.text;
-  if (characterName) {
-    displayText = displayText.replace('你', characterName);
   }
 
   // 檢查是否是抓周節點
@@ -134,12 +151,10 @@ const 選項按鈕: React.FC = () => {
   }
 
   // If we're showing a scenario with multiple choices
-  if (showScenarioChoices && (currentAgeScenario || scenarioRef.current) && 
-      (currentAgeScenario?.choices || scenarioRef.current?.choices)) {
-    const scenarioToUse = currentAgeScenario || scenarioRef.current;
+  if (showScenarioChoices && currentScenarioRef.current && currentScenarioRef.current.choices) {
     return (
       <ScenarioChoices 
-        currentAgeScenario={scenarioToUse!} 
+        currentAgeScenario={currentScenarioRef.current} 
         onChoiceSelected={() => setShowScenarioChoices(false)} 
       />
     );
@@ -147,11 +162,10 @@ const 選項按鈕: React.FC = () => {
 
   // If we're at age_progression and have processed the age scenario, 
   // show a "Next Year" button to proceed to the next year
-  if (isAgeProgressionNode && hasProcessedAge) {
-    const scenarioToUse = currentAgeScenario || scenarioRef.current;
+  if (isAgeProgressionNode && hasProcessedAgeRef.current) {
     return (
       <NextYearButton 
-        currentAgeScenario={scenarioToUse} 
+        currentAgeScenario={currentScenarioRef.current} 
         resetScenario={resetScenario} 
       />
     );
