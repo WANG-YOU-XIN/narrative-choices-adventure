@@ -17,15 +17,24 @@ const 選項按鈕: React.FC = () => {
     characterName, 
     characterStats,
     characterAge,
-    isGameOver 
+    isGameOver,
+    isInventoryOpen
   } = useGame();
   const [hasProcessedAge, setHasProcessedAge] = useState(false);
   const [currentAgeScenario, setCurrentAgeScenario] = useState<AgeScenario | null>(null);
   const [showScenarioChoices, setShowScenarioChoices] = useState(false);
   const [isRandomScenarioLoaded, setIsRandomScenarioLoaded] = useState(false);
 
+  // Use a separate state to track if we're on the age_progression node
+  const [isAgeProgressionNode, setIsAgeProgressionNode] = useState(false);
+  const [isConstitutionCheckNode, setIsConstitutionCheckNode] = useState(false);
+
   useEffect(() => {
-    // Reset states when node changes (except for age_progression)
+    // Update node type tracking states
+    setIsAgeProgressionNode(currentNode.id === 'age_progression');
+    setIsConstitutionCheckNode(currentNode.id === 'check_constitution');
+
+    // Only reset states when changing to a node that's not age_progression
     if (currentNode.id !== 'age_progression') {
       setHasProcessedAge(false);
       setCurrentAgeScenario(null);
@@ -45,9 +54,12 @@ const 選項按鈕: React.FC = () => {
         increaseAge(1); // Increase age since we're skipping ahead
       }
     }
-    
-    // Handle random age scenarios when on age_progression node and not already processed
-    if (currentNode.id === 'age_progression' && !hasProcessedAge && !isRandomScenarioLoaded) {
+  }, [currentNode.id, characterStats.constitution]);
+
+  // Separate useEffect for handling random age scenarios to prevent re-triggering
+  useEffect(() => {
+    // Only process age scenarios when on age_progression node and inventory is not open
+    if (isAgeProgressionNode && !hasProcessedAge && !isRandomScenarioLoaded && !isInventoryOpen) {
       // Get a random scenario for the current age if available
       const scenario = getRandomScenarioForAge(characterAge);
       
@@ -82,7 +94,14 @@ const 選項按鈕: React.FC = () => {
         setHasProcessedAge(true);
       }
     }
-  }, [currentNode.id, characterAge, characterStats.constitution, hasProcessedAge, isRandomScenarioLoaded]);
+  }, [
+    isAgeProgressionNode, 
+    characterAge, 
+    hasProcessedAge, 
+    isRandomScenarioLoaded, 
+    isInventoryOpen, 
+    currentNode
+  ]);
 
   // Helper function to show toast notifications for stat changes
   const showStatChangeToast = (statName: string, value: number) => {
@@ -151,7 +170,7 @@ const 選項按鈕: React.FC = () => {
 
   // If we're at age_progression and have processed the age scenario, 
   // show a "Next Year" button to proceed to the next year
-  if (currentNode.id === 'age_progression' && hasProcessedAge) {
+  if (isAgeProgressionNode && hasProcessedAge) {
     return (
       <div className="w-full flex flex-col space-y-4 p-4">
         <Button
