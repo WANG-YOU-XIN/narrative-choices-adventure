@@ -55,9 +55,7 @@ const ScenarioChoices: React.FC<ScenarioChoicesProps> = ({
     onChoiceSelected();
     
     // Clear the current scenario from localStorage
-    // Use the age from the scenario if available, otherwise use characterAge from context
-    const ageToUse = currentAgeScenario.age !== undefined ? currentAgeScenario.age : characterAge;
-    const storageKey = `scenario_age_${ageToUse}`;
+    const storageKey = `scenario_age_${characterAge}`;
     localStorage.removeItem(storageKey);
     
     // Increase age first

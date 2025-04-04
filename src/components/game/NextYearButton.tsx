@@ -2,7 +2,7 @@
 import React from 'react';
 import { useGame } from '../../context/GameContext';
 import { Button } from '@/components/ui/button';
-import { getStoryNode, getRandomScenarioForAge } from '../../data/storyData';
+import { getRandomScenarioForAge } from '../../data/storyData';
 import { AgeScenario } from '../../data/ageScenarios';
 import { toast } from "@/hooks/use-toast";
 
@@ -48,6 +48,11 @@ const NextYearButton: React.FC<NextYearButtonProps> = ({
       showStatChangeToast(currentAgeScenario.effect.statName, currentAgeScenario.effect.value);
     }
     
+    // Clear the current scenario from localStorage
+    const storageKey = `scenario_age_${characterAge}`;
+    localStorage.removeItem(storageKey);
+    
+    // Increase age
     increaseAge(1);
     resetScenario();
     
@@ -70,10 +75,6 @@ const NextYearButton: React.FC<NextYearButtonProps> = ({
       
       // Set the current node to our custom node with the scenario text
       setCurrentNode(customNode);
-    } else {
-      // If no scenario is available for this age, use the age_progression node
-      const nextNode = getStoryNode('age_progression');
-      setCurrentNode(nextNode);
     }
   };
 

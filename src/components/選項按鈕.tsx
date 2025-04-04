@@ -91,10 +91,26 @@ const 選項按鈕: React.FC = () => {
       const canContinue = checkConstitution(characterStats.constitution);
       
       if (!canContinue) {
-        // If check fails, skip to age_progression
-        const nextNode = getStoryNode('age_progression');
-        setCurrentNode(nextNode);
-        increaseAge(1); // Increase age since we're skipping ahead
+        // If check fails, directly load the next age scenario instead of going to age_progression
+        const newAge = characterAge + 1;
+        const newScenario = getRandomScenarioForAge(newAge);
+        
+        if (newScenario) {
+          // Store the new scenario in localStorage
+          const newStorageKey = `scenario_age_${newAge}`;
+          localStorage.setItem(newStorageKey, JSON.stringify(newScenario));
+          
+          // Create a custom node with the scenario text
+          const customNode = {
+            id: `custom_age_${newAge}`,
+            text: `【年齡：${newAge}歲】\n${newScenario.text}`,
+            choices: []  // Empty choices since we'll handle them in the 選項按鈕 component
+          };
+          
+          // Set the current node to our custom node with the scenario text
+          setCurrentNode(customNode);
+          increaseAge(1); // Increase age since we're skipping ahead
+        }
       }
     }
   }, [currentNode.id, characterStats.constitution, isInventoryOpen]);
@@ -105,69 +121,37 @@ const 選項按鈕: React.FC = () => {
     if (isAgeProgressionNode && !hasProcessedAgeRef.current) {
       console.log(`Processing age scenario for age ${characterAge}`);
       
-      // Check if we already have a stored scenario for this age in localStorage
-      const storageKey = `scenario_age_${characterAge}`;
-      const storedScenario = localStorage.getItem(storageKey);
+      // Instead of updating the current node, directly load the next age scenario
+      const newScenario = getRandomScenarioForAge(characterAge);
       
-      if (storedScenario) {
-        // Use the stored scenario
-        try {
-          const parsedScenario = JSON.parse(storedScenario);
-          currentScenarioRef.current = parsedScenario;
-          
-          // If scenario has choices, show them
-          if (parsedScenario.choices && parsedScenario.choices.length > 0) {
-            setShowScenarioChoices(true);
-          }
-          
-          // Update the story text with stored scenario
-          const updatedNode = { 
-            ...currentNode, 
-            text: `【年齡：${characterAge}歲】\n${parsedScenario.text}`
-          };
-          
-          setCurrentNode(updatedNode);
-          hasProcessedAgeRef.current = true;
-        } catch (e) {
-          console.error("Failed to parse stored scenario:", e);
-          // If parsing fails, get a new scenario
-          getAndSetNewScenario();
+      if (newScenario) {
+        // Save to ref and localStorage for persistence
+        currentScenarioRef.current = newScenario;
+        
+        const storageKey = `scenario_age_${characterAge}`;
+        localStorage.setItem(storageKey, JSON.stringify(newScenario));
+        
+        // Create a custom node with the scenario text
+        const customNode = {
+          id: `custom_age_${characterAge}`,
+          text: `【年齡：${characterAge}歲】\n${newScenario.text}`,
+          choices: []  // Empty choices since we'll handle them in the 選項按鈕 component
+        };
+        
+        // Set the current node to our custom node with the scenario text
+        setCurrentNode(customNode);
+        
+        // If scenario has choices, show them
+        if (newScenario.choices && newScenario.choices.length > 0) {
+          setShowScenarioChoices(true);
         }
-      } else {
-        // Get a new random scenario
-        getAndSetNewScenario();
+        
+        hasProcessedAgeRef.current = true;
       }
     }
   }, [isAgeProgressionNode, characterAge, currentNode, isInventoryOpen]);
   
-  // Helper function to get and set a new scenario
-  const getAndSetNewScenario = () => {
-    const scenario = getRandomScenarioForAge(characterAge);
-    
-    if (scenario) {
-      // Save to ref and localStorage for persistence
-      currentScenarioRef.current = scenario;
-      
-      const storageKey = `scenario_age_${characterAge}`;
-      localStorage.setItem(storageKey, JSON.stringify(scenario));
-      
-      // If scenario has choices, show them instead of applying effect immediately
-      if (scenario.choices && scenario.choices.length > 0) {
-        setShowScenarioChoices(true);
-      }
-      
-      // Update the story text to include the scenario
-      const updatedNode = { 
-        ...currentNode, 
-        text: `【年齡：${characterAge}歲】\n${scenario.text}`
-      };
-      
-      setCurrentNode(updatedNode);
-      hasProcessedAgeRef.current = true;
-    }
-  };
-
-  // Reset scenario states helper function (now only used for NextYearButton)
+  // Reset scenario states helper function
   const resetScenario = () => {
     hasProcessedAgeRef.current = false;
     currentScenarioRef.current = null;
@@ -197,9 +181,10 @@ const 選項按鈕: React.FC = () => {
     );
   }
 
-  // If we're at age_progression or custom_age and have processed the age scenario, 
+  // If we're at a custom_age node and have processed the age scenario (no choices),
+  // or if we're at age_progression (for backward compatibility),
   // show a "Next Year" button to proceed to the next year
-  if ((isAgeProgressionNode || isCustomAgeNode) && hasProcessedAgeRef.current) {
+  if ((isCustomAgeNode || isAgeProgressionNode) && hasProcessedAgeRef.current) {
     return (
       <NextYearButton 
         currentAgeScenario={currentScenarioRef.current} 
