@@ -1,3 +1,4 @@
+
 import { CharacterStats } from '../types/game.types';
 
 interface AgeScenarioEffect {
@@ -8,6 +9,7 @@ interface AgeScenarioEffect {
 export interface AgeScenario {
   id: string;
   text: string;
+  age?: number; // Add optional age property
   effect?: {
     statName: keyof CharacterStats;
     value: number;
@@ -915,7 +917,12 @@ export const getRandomScenarioForAge = (age: number): AgeScenario | null => {
   
   if (combinedScenarios.length > 0) {
     const randomIndex = Math.floor(Math.random() * combinedScenarios.length);
-    return combinedScenarios[randomIndex];
+    const scenario = combinedScenarios[randomIndex];
+    // Add the age to the scenario for reference
+    return {
+      ...scenario,
+      age: age
+    };
   }
   return null;
 };

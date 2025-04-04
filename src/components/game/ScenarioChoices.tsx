@@ -15,7 +15,7 @@ const ScenarioChoices: React.FC<ScenarioChoicesProps> = ({
   currentAgeScenario, 
   onChoiceSelected 
 }) => {
-  const { updateStat, increaseAge, setCurrentNode } = useGame();
+  const { updateStat, increaseAge, setCurrentNode, characterAge } = useGame();
 
   // Helper function to show toast notifications for stat changes
   const showStatChangeToast = (statName: string, value: number) => {
@@ -55,7 +55,9 @@ const ScenarioChoices: React.FC<ScenarioChoicesProps> = ({
     onChoiceSelected();
     
     // Clear the current scenario from localStorage
-    const storageKey = `scenario_age_${currentAgeScenario.age}`;
+    // Use the age from the scenario if available, otherwise use characterAge from context
+    const ageToUse = currentAgeScenario.age !== undefined ? currentAgeScenario.age : characterAge;
+    const storageKey = `scenario_age_${ageToUse}`;
     localStorage.removeItem(storageKey);
     
     // Increase age and progress to next year
