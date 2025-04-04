@@ -4,6 +4,7 @@ import { useGame } from '../../context/GameContext';
 import { Button } from '@/components/ui/button';
 import { AgeScenario } from '../../data/ageScenarios';
 import { toast } from "@/hooks/use-toast";
+import { getStoryNode } from '../../data/storyData';
 
 interface ScenarioChoicesProps {
   currentAgeScenario: AgeScenario;
@@ -14,7 +15,7 @@ const ScenarioChoices: React.FC<ScenarioChoicesProps> = ({
   currentAgeScenario, 
   onChoiceSelected 
 }) => {
-  const { updateStat } = useGame();
+  const { updateStat, increaseAge, setCurrentNode } = useGame();
 
   // Helper function to show toast notifications for stat changes
   const showStatChangeToast = (statName: string, value: number) => {
@@ -39,22 +40,39 @@ const ScenarioChoices: React.FC<ScenarioChoicesProps> = ({
     });
   };
 
+  // Function to handle choice selection and advance to next year
+  const handleChoiceAndAdvance = (choiceIndex: number) => {
+    const choice = currentAgeScenario.choices[choiceIndex];
+    
+    // Apply the effect from the choice
+    if (choice.effect) {
+      updateStat(choice.effect.statName, choice.effect.value);
+      // Show toast notification for stat change
+      showStatChangeToast(choice.effect.statName, choice.effect.value);
+    }
+    
+    // Hide the choices after selection
+    onChoiceSelected();
+    
+    // Clear the current scenario from localStorage
+    const storageKey = `scenario_age_${currentAgeScenario.age}`;
+    localStorage.removeItem(storageKey);
+    
+    // Increase age and progress to next year
+    increaseAge(1);
+    
+    // Reset the current node to trigger a new age scenario
+    const nextNode = getStoryNode('age_progression');
+    setCurrentNode(nextNode);
+  };
+
   return (
     <div className="w-full flex flex-col space-y-4 p-4">
       {currentAgeScenario.choices.map((choice, index) => (
         <Button
           key={index}
           className="choice-button w-full text-lg py-4 bg-game-primary hover:bg-game-accent text-white"
-          onClick={() => {
-            // Apply the effect from the choice
-            if (choice.effect) {
-              updateStat(choice.effect.statName, choice.effect.value);
-              // Show toast notification for stat change
-              showStatChangeToast(choice.effect.statName, choice.effect.value);
-            }
-            // Hide the choices after selection
-            onChoiceSelected();
-          }}
+          onClick={() => handleChoiceAndAdvance(index)}
         >
           {choice.text}
         </Button>

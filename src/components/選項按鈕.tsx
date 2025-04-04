@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useRef } from 'react';
 import { useGame } from '../context/GameContext';
 import { getStoryNode, checkConstitution, getRandomScenarioForAge } from '../data/storyData';
@@ -44,7 +45,7 @@ const 選項按鈕: React.FC = () => {
       
       // Don't reset the current scenario when just toggling inventory
       // Only reset when actually changing nodes
-      if (!isScenarioLoadedRef.current) {
+      if (!isScenarioLoadedRef.current && !isInventoryOpen) {
         currentScenarioRef.current = null;
         setShowScenarioChoices(false);
       }
@@ -104,7 +105,7 @@ const 選項按鈕: React.FC = () => {
       
       hasProcessedAgeRef.current = true;
     }
-  }, [isAgeProgressionNode, characterAge, currentNode]);
+  }, [isAgeProgressionNode, characterAge, currentNode, isInventoryOpen]);
   
   // Helper function to get and set a new scenario
   const getAndSetNewScenario = () => {
@@ -133,13 +134,10 @@ const 選項按鈕: React.FC = () => {
     }
   };
 
-  // Reset scenario states helper function
+  // Reset scenario states helper function (now only used for NextYearButton)
   const resetScenario = () => {
     hasProcessedAgeRef.current = false;
     isScenarioLoadedRef.current = false;
-    
-    // Keep the current scenario when just resetting for next age
-    // Only clear it when actually changing to next year
     currentScenarioRef.current = null;
     
     // Clear from localStorage when moving to next age
