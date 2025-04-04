@@ -4,7 +4,7 @@ import { useGame } from '../../context/GameContext';
 import { Button } from '@/components/ui/button';
 import { AgeScenario } from '../../data/ageScenarios';
 import { toast } from "@/hooks/use-toast";
-import { getStoryNode } from '../../data/storyData';
+import { getStoryNode, getRandomScenarioForAge } from '../../data/storyData';
 
 interface ScenarioChoicesProps {
   currentAgeScenario: AgeScenario;
@@ -60,12 +60,23 @@ const ScenarioChoices: React.FC<ScenarioChoicesProps> = ({
     const storageKey = `scenario_age_${ageToUse}`;
     localStorage.removeItem(storageKey);
     
-    // Increase age and progress to next year
+    // Increase age first
     increaseAge(1);
     
-    // Reset the current node to trigger a new age scenario
+    // Now get a new scenario for the new age and update the node text
     const nextNode = getStoryNode('age_progression');
+    
+    // Set the current node to trigger rendering of the new age scenario
     setCurrentNode(nextNode);
+    
+    // Since we're processing the age scenarios in the 選項按鈕 component using effects,
+    // we need to make sure the references are reset so it can process the new age
+    setTimeout(() => {
+      // This forces the 選項按鈕 component to load a new scenario for the new age
+      // by signaling that we're on the age_progression node
+      const refreshNode = {...nextNode};
+      setCurrentNode(refreshNode);
+    }, 10);
   };
 
   return (

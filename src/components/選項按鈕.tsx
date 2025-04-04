@@ -26,7 +26,6 @@ const 選項按鈕: React.FC = () => {
   const hasProcessedAgeRef = useRef(false);
   const currentScenarioRef = useRef<AgeScenario | null>(null);
   const [showScenarioChoices, setShowScenarioChoices] = useState(false);
-  const isScenarioLoadedRef = useRef(false);
   
   // Track node types
   const [isAgeProgressionNode, setIsAgeProgressionNode] = useState(false);
@@ -35,17 +34,21 @@ const 選項按鈕: React.FC = () => {
   // This effect sets up node type flags and handles constitution check
   useEffect(() => {
     // Update node type tracking states
-    setIsAgeProgressionNode(currentNode.id === 'age_progression');
+    const isAgeProg = currentNode.id === 'age_progression';
+    setIsAgeProgressionNode(isAgeProg);
     setIsConstitutionCheckNode(currentNode.id === 'check_constitution');
 
+    // Reset the flags if we moved to a new age_progression node
+    if (isAgeProg) {
+      hasProcessedAgeRef.current = false;
+    }
+    
     // Only reset states when changing to a node that's not age_progression
     if (currentNode.id !== 'age_progression') {
       hasProcessedAgeRef.current = false;
-      isScenarioLoadedRef.current = false;
       
       // Don't reset the current scenario when just toggling inventory
-      // Only reset when actually changing nodes
-      if (!isScenarioLoadedRef.current && !isInventoryOpen) {
+      if (!isInventoryOpen) {
         currentScenarioRef.current = null;
         setShowScenarioChoices(false);
       }
@@ -63,13 +66,14 @@ const 選項按鈕: React.FC = () => {
         increaseAge(1); // Increase age since we're skipping ahead
       }
     }
-  }, [currentNode.id, characterStats.constitution]);
+  }, [currentNode.id, characterStats.constitution, isInventoryOpen]);
 
   // This effect handles loading scenarios only once
   useEffect(() => {
-    // Only process age scenarios when on age_progression node, 
-    // only do it once via ref, and don't re-process if we've already loaded a scenario
-    if (isAgeProgressionNode && !hasProcessedAgeRef.current && !isScenarioLoadedRef.current) {
+    // Only process age scenarios when on age_progression node and hasn't been processed yet
+    if (isAgeProgressionNode && !hasProcessedAgeRef.current) {
+      console.log(`Processing age scenario for age ${characterAge}`);
+      
       // Check if we already have a stored scenario for this age in localStorage
       const storageKey = `scenario_age_${characterAge}`;
       const storedScenario = localStorage.getItem(storageKey);
@@ -79,7 +83,6 @@ const 選項按鈕: React.FC = () => {
         try {
           const parsedScenario = JSON.parse(storedScenario);
           currentScenarioRef.current = parsedScenario;
-          isScenarioLoadedRef.current = true;
           
           // If scenario has choices, show them
           if (parsedScenario.choices && parsedScenario.choices.length > 0) {
@@ -93,6 +96,7 @@ const 選項按鈕: React.FC = () => {
           };
           
           setCurrentNode(updatedNode);
+          hasProcessedAgeRef.current = true;
         } catch (e) {
           console.error("Failed to parse stored scenario:", e);
           // If parsing fails, get a new scenario
@@ -102,8 +106,6 @@ const 選項按鈕: React.FC = () => {
         // Get a new random scenario
         getAndSetNewScenario();
       }
-      
-      hasProcessedAgeRef.current = true;
     }
   }, [isAgeProgressionNode, characterAge, currentNode, isInventoryOpen]);
   
@@ -114,7 +116,6 @@ const 選項按鈕: React.FC = () => {
     if (scenario) {
       // Save to ref and localStorage for persistence
       currentScenarioRef.current = scenario;
-      isScenarioLoadedRef.current = true;
       
       const storageKey = `scenario_age_${characterAge}`;
       localStorage.setItem(storageKey, JSON.stringify(scenario));
@@ -131,13 +132,13 @@ const 選項按鈕: React.FC = () => {
       };
       
       setCurrentNode(updatedNode);
+      hasProcessedAgeRef.current = true;
     }
   };
 
   // Reset scenario states helper function (now only used for NextYearButton)
   const resetScenario = () => {
     hasProcessedAgeRef.current = false;
-    isScenarioLoadedRef.current = false;
     currentScenarioRef.current = null;
     
     // Clear from localStorage when moving to next age
