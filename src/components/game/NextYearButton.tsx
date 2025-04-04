@@ -2,7 +2,7 @@
 import React from 'react';
 import { useGame } from '../../context/GameContext';
 import { Button } from '@/components/ui/button';
-import { getStoryNode } from '../../data/storyData';
+import { getStoryNode, getRandomScenarioForAge } from '../../data/storyData';
 import { AgeScenario } from '../../data/ageScenarios';
 import { toast } from "@/hooks/use-toast";
 
@@ -15,7 +15,7 @@ const NextYearButton: React.FC<NextYearButtonProps> = ({
   currentAgeScenario, 
   resetScenario 
 }) => {
-  const { updateStat, increaseAge, setCurrentNode } = useGame();
+  const { updateStat, increaseAge, setCurrentNode, characterAge } = useGame();
 
   // Helper function to show toast notifications for stat changes
   const showStatChangeToast = (statName: string, value: number) => {
@@ -40,24 +40,48 @@ const NextYearButton: React.FC<NextYearButtonProps> = ({
     });
   };
 
+  const handleNextYear = () => {
+    // Apply the scenario effect now (for scenarios without choices)
+    if (currentAgeScenario && currentAgeScenario.effect) {
+      updateStat(currentAgeScenario.effect.statName, currentAgeScenario.effect.value);
+      // Show toast notification for stat change
+      showStatChangeToast(currentAgeScenario.effect.statName, currentAgeScenario.effect.value);
+    }
+    
+    increaseAge(1);
+    resetScenario();
+    
+    // Get the new scenario for the next age
+    const newAge = characterAge + 1;
+    const newScenario = getRandomScenarioForAge(newAge);
+    
+    // If we have a new scenario, update the story text
+    if (newScenario) {
+      // Store the new scenario in localStorage
+      const newStorageKey = `scenario_age_${newAge}`;
+      localStorage.setItem(newStorageKey, JSON.stringify(newScenario));
+      
+      // Create a custom node with the scenario text
+      const customNode = {
+        id: `custom_age_${newAge}`,
+        text: `【年齡：${newAge}歲】\n${newScenario.text}`,
+        choices: []  // Empty choices since we'll handle them in the 選項按鈕 component
+      };
+      
+      // Set the current node to our custom node with the scenario text
+      setCurrentNode(customNode);
+    } else {
+      // If no scenario is available for this age, use the age_progression node
+      const nextNode = getStoryNode('age_progression');
+      setCurrentNode(nextNode);
+    }
+  };
+
   return (
     <div className="w-full flex flex-col space-y-4 p-4">
       <Button
         className="choice-button w-full text-lg py-4 bg-game-primary hover:bg-game-accent text-white"
-        onClick={() => {
-          // Apply the scenario effect now (for scenarios without choices)
-          if (currentAgeScenario && currentAgeScenario.effect) {
-            updateStat(currentAgeScenario.effect.statName, currentAgeScenario.effect.value);
-            // Show toast notification for stat change
-            showStatChangeToast(currentAgeScenario.effect.statName, currentAgeScenario.effect.value);
-          }
-          
-          increaseAge(1);
-          resetScenario();
-          // Reset the current node to trigger a new age scenario
-          const nextNode = getStoryNode('age_progression');
-          setCurrentNode(nextNode);
-        }}
+        onClick={handleNextYear}
       >
         下一年
       </Button>

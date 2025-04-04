@@ -4,7 +4,7 @@ import { useGame } from '../../context/GameContext';
 import { Button } from '@/components/ui/button';
 import { AgeScenario } from '../../data/ageScenarios';
 import { toast } from "@/hooks/use-toast";
-import { getStoryNode, getRandomScenarioForAge } from '../../data/storyData';
+import { getRandomScenarioForAge } from '../../data/storyData';
 
 interface ScenarioChoicesProps {
   currentAgeScenario: AgeScenario;
@@ -63,20 +63,26 @@ const ScenarioChoices: React.FC<ScenarioChoicesProps> = ({
     // Increase age first
     increaseAge(1);
     
-    // Now get a new scenario for the new age and update the node text
-    const nextNode = getStoryNode('age_progression');
+    // Get the new scenario for the next age
+    const newAge = characterAge + 1;
+    const newScenario = getRandomScenarioForAge(newAge);
     
-    // Set the current node to trigger rendering of the new age scenario
-    setCurrentNode(nextNode);
-    
-    // Since we're processing the age scenarios in the 選項按鈕 component using effects,
-    // we need to make sure the references are reset so it can process the new age
-    setTimeout(() => {
-      // This forces the 選項按鈕 component to load a new scenario for the new age
-      // by signaling that we're on the age_progression node
-      const refreshNode = {...nextNode};
-      setCurrentNode(refreshNode);
-    }, 10);
+    // If we have a new scenario, update the story text
+    if (newScenario) {
+      // Store the new scenario in localStorage
+      const newStorageKey = `scenario_age_${newAge}`;
+      localStorage.setItem(newStorageKey, JSON.stringify(newScenario));
+      
+      // Create a custom node with the scenario text
+      const customNode = {
+        id: `custom_age_${newAge}`,
+        text: `【年齡：${newAge}歲】\n${newScenario.text}`,
+        choices: []  // Empty choices since we'll handle them in the 選項按鈕 component
+      };
+      
+      // Set the current node to our custom node with the scenario text
+      setCurrentNode(customNode);
+    }
   };
 
   return (

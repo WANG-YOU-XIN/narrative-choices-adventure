@@ -30,12 +30,16 @@ const 選項按鈕: React.FC = () => {
   // Track node types
   const [isAgeProgressionNode, setIsAgeProgressionNode] = useState(false);
   const [isConstitutionCheckNode, setIsConstitutionCheckNode] = useState(false);
+  const [isCustomAgeNode, setIsCustomAgeNode] = useState(false);
   
   // This effect sets up node type flags and handles constitution check
   useEffect(() => {
     // Update node type tracking states
     const isAgeProg = currentNode.id === 'age_progression';
+    const isCustomAge = currentNode.id.startsWith('custom_age_');
+    
     setIsAgeProgressionNode(isAgeProg);
+    setIsCustomAgeNode(isCustomAge);
     setIsConstitutionCheckNode(currentNode.id === 'check_constitution');
 
     // Reset the flags if we moved to a new age_progression node
@@ -43,8 +47,35 @@ const 選項按鈕: React.FC = () => {
       hasProcessedAgeRef.current = false;
     }
     
-    // Only reset states when changing to a node that's not age_progression
-    if (currentNode.id !== 'age_progression') {
+    // If we're on a custom age node, let's extract the scenario
+    if (isCustomAge && !isInventoryOpen) {
+      const ageMatch = currentNode.id.match(/custom_age_(\d+)/);
+      if (ageMatch && ageMatch[1]) {
+        const age = parseInt(ageMatch[1], 10);
+        const storageKey = `scenario_age_${age}`;
+        const storedScenario = localStorage.getItem(storageKey);
+        
+        if (storedScenario) {
+          try {
+            const parsedScenario = JSON.parse(storedScenario);
+            currentScenarioRef.current = parsedScenario;
+            
+            // If scenario has choices, show them
+            if (parsedScenario.choices && parsedScenario.choices.length > 0) {
+              setShowScenarioChoices(true);
+            } else {
+              // If no choices, show the next year button
+              hasProcessedAgeRef.current = true;
+            }
+          } catch (e) {
+            console.error("Failed to parse stored scenario:", e);
+          }
+        }
+      }
+    }
+    
+    // Only reset states when changing to a node that's not age_progression or custom_age
+    if (!isAgeProg && !isCustomAge) {
       hasProcessedAgeRef.current = false;
       
       // Don't reset the current scenario when just toggling inventory
@@ -68,7 +99,7 @@ const 選項按鈕: React.FC = () => {
     }
   }, [currentNode.id, characterStats.constitution, isInventoryOpen]);
 
-  // This effect handles loading scenarios only once
+  // This effect handles loading scenarios only for age_progression nodes
   useEffect(() => {
     // Only process age scenarios when on age_progression node and hasn't been processed yet
     if (isAgeProgressionNode && !hasProcessedAgeRef.current) {
@@ -166,9 +197,9 @@ const 選項按鈕: React.FC = () => {
     );
   }
 
-  // If we're at age_progression and have processed the age scenario, 
+  // If we're at age_progression or custom_age and have processed the age scenario, 
   // show a "Next Year" button to proceed to the next year
-  if (isAgeProgressionNode && hasProcessedAgeRef.current) {
+  if ((isAgeProgressionNode || isCustomAgeNode) && hasProcessedAgeRef.current) {
     return (
       <NextYearButton 
         currentAgeScenario={currentScenarioRef.current} 
