@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useRef } from 'react';
 import { useGame } from '../context/GameContext';
 import { getStoryNode, checkConstitution, getRandomScenarioForAge } from '../data/storyData';
@@ -41,9 +40,14 @@ const 選項按鈕: React.FC = () => {
     // Only reset states when changing to a node that's not age_progression
     if (currentNode.id !== 'age_progression') {
       hasProcessedAgeRef.current = false;
-      currentScenarioRef.current = null;
-      setShowScenarioChoices(false);
       isScenarioLoadedRef.current = false;
+      
+      // Don't reset the current scenario when just toggling inventory
+      // Only reset when actually changing nodes
+      if (!isScenarioLoadedRef.current) {
+        currentScenarioRef.current = null;
+        setShowScenarioChoices(false);
+      }
     }
 
     // Check if we're on the check_constitution node
@@ -133,6 +137,9 @@ const 選項按鈕: React.FC = () => {
   const resetScenario = () => {
     hasProcessedAgeRef.current = false;
     isScenarioLoadedRef.current = false;
+    
+    // Keep the current scenario when just resetting for next age
+    // Only clear it when actually changing to next year
     currentScenarioRef.current = null;
     
     // Clear from localStorage when moving to next age
