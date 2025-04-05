@@ -6,7 +6,7 @@ import 選項按鈕 from './選項按鈕';
 import 物品欄按鈕 from './物品欄按鈕';
 import 物品欄 from './物品欄';
 import 角色屬性 from './角色屬性';
-import 角色面板 from './角色面板';
+import 角色簡易圖 from './角色簡易圖';
 import 關閉按鈕 from './關閉按鈕';
 import CharacterCreation from './CharacterCreation';
 import 年齡顯示 from './年齡顯示';
@@ -56,7 +56,7 @@ const 遊戲容器: React.FC = () => {
               <角色屬性 />
             </div>
             <div className="w-1/2 p-4">
-              <角色面板 />
+              <角色簡易圖 />
             </div>
           </div>
           <div className="h-1/2">
