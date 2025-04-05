@@ -4,7 +4,7 @@ import { useGame } from '../../context/GameContext';
 import { Button } from '@/components/ui/button';
 import { AgeScenario } from '../../data/ageScenarios';
 import { toast } from "@/hooks/use-toast";
-import { getRandomScenarioForAge } from '../../data/storyData';
+import { getRandomScenarioForAge, isMultiChoiceScenario, isSingleChoiceScenario } from '../../data/storyData';
 
 interface ScenarioChoicesProps {
   currentAgeScenario: AgeScenario;
@@ -42,7 +42,8 @@ const ScenarioChoices: React.FC<ScenarioChoicesProps> = ({
 
   // Function to handle choice selection and advance to next year
   const handleChoiceAndAdvance = (choiceIndex: number) => {
-    const choice = currentAgeScenario.choices[choiceIndex];
+    const choice = currentAgeScenario.choices?.[choiceIndex];
+    if (!choice) return;
     
     // Apply the effect from the choice
     if (choice.effect) {
@@ -85,7 +86,7 @@ const ScenarioChoices: React.FC<ScenarioChoicesProps> = ({
 
   return (
     <div className="w-full flex flex-col space-y-4 p-4">
-      {currentAgeScenario.choices.map((choice, index) => (
+      {currentAgeScenario.choices?.map((choice, index) => (
         <Button
           key={index}
           className="choice-button w-full text-lg py-4 bg-game-primary hover:bg-game-accent text-white"

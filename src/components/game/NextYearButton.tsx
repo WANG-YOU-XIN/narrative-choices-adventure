@@ -2,17 +2,18 @@
 import React from 'react';
 import { useGame } from '../../context/GameContext';
 import { Button } from '@/components/ui/button';
-import { getRandomScenarioForAge } from '../../data/storyData';
+import { getRandomScenarioForAge, isMultiChoiceScenario, isSingleChoiceScenario } from '../../data/storyData';
 import { AgeScenario } from '../../data/ageScenarios';
+import { SingleChoiceScenario } from '../../data/singleChoiceScenarios';
 import { toast } from "@/hooks/use-toast";
 
 interface NextYearButtonProps {
-  currentAgeScenario: AgeScenario | null;
+  currentScenario: AgeScenario | SingleChoiceScenario | null;
   resetScenario: () => void;
 }
 
 const NextYearButton: React.FC<NextYearButtonProps> = ({ 
-  currentAgeScenario, 
+  currentScenario, 
   resetScenario 
 }) => {
   const { updateStat, increaseAge, setCurrentNode, characterAge } = useGame();
@@ -42,10 +43,10 @@ const NextYearButton: React.FC<NextYearButtonProps> = ({
 
   const handleNextYear = () => {
     // Apply the scenario effect now (for scenarios without choices)
-    if (currentAgeScenario && currentAgeScenario.effect) {
-      updateStat(currentAgeScenario.effect.statName, currentAgeScenario.effect.value);
+    if (currentScenario && currentScenario.effect) {
+      updateStat(currentScenario.effect.statName, currentScenario.effect.value);
       // Show toast notification for stat change
-      showStatChangeToast(currentAgeScenario.effect.statName, currentAgeScenario.effect.value);
+      showStatChangeToast(currentScenario.effect.statName, currentScenario.effect.value);
     }
     
     // Clear the current scenario from localStorage

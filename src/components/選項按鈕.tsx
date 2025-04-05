@@ -1,8 +1,9 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { useGame } from '../context/GameContext';
-import { getStoryNode, checkConstitution, getRandomScenarioForAge } from '../data/storyData';
+import { getStoryNode, checkConstitution, getRandomScenarioForAge, isMultiChoiceScenario, isSingleChoiceScenario } from '../data/storyData';
 import { AgeScenario } from '../data/ageScenarios';
+import { SingleChoiceScenario } from '../data/singleChoiceScenarios';
 import 抓周活動 from './抓周活動';
 
 // Import our components
@@ -22,10 +23,10 @@ const 選項按鈕: React.FC = () => {
     isInventoryOpen
   } = useGame();
 
-  // Use refs to maintain state between renders
-  const hasProcessedAgeRef = useRef(false);
-  const currentScenarioRef = useRef<AgeScenario | null>(null);
+  // Use ref to maintain current scenario state
+  const currentScenarioRef = useRef<AgeScenario | SingleChoiceScenario | null>(null);
   const [showScenarioChoices, setShowScenarioChoices] = useState(false);
+  const [showNextYearButton, setShowNextYearButton] = useState(false);
   
   // Track node types
   const [isAgeProgressionNode, setIsAgeProgressionNode] = useState(false);
@@ -42,12 +43,7 @@ const 選項按鈕: React.FC = () => {
     setIsCustomAgeNode(isCustomAge);
     setIsConstitutionCheckNode(currentNode.id === 'check_constitution');
 
-    // Reset the flags if we moved to a new age_progression node
-    if (isAgeProg) {
-      hasProcessedAgeRef.current = false;
-    }
-    
-    // If we're on a custom age node, let's extract the scenario
+    // If we're on a custom age node, extract the scenario
     if (isCustomAge && !isInventoryOpen) {
       const ageMatch = currentNode.id.match(/custom_age_(\d+)/);
       if (ageMatch && ageMatch[1]) {
@@ -60,13 +56,14 @@ const 選項按鈕: React.FC = () => {
             const parsedScenario = JSON.parse(storedScenario);
             currentScenarioRef.current = parsedScenario;
             
-            // If scenario has choices, show them
-            if (parsedScenario.choices && parsedScenario.choices.length > 0) {
+            // Determine which UI to show based on scenario type
+            if (isMultiChoiceScenario(parsedScenario)) {
               setShowScenarioChoices(true);
-              hasProcessedAgeRef.current = false; // Reset so we don't show the NextYearButton
+              setShowNextYearButton(false);
             } else {
-              // If no choices, mark as processed so we show the next year button
-              hasProcessedAgeRef.current = true;
+              // For single-choice scenarios, show the next year button
+              setShowScenarioChoices(false);
+              setShowNextYearButton(true);
             }
           } catch (e) {
             console.error("Failed to parse stored scenario:", e);
@@ -75,14 +72,13 @@ const 選項按鈕: React.FC = () => {
       }
     }
     
-    // Only reset states when changing to a node that's not age_progression or custom_age
+    // Reset states when changing to a node that's not age_progression or custom_age
     if (!isAgeProg && !isCustomAge) {
-      hasProcessedAgeRef.current = false;
-      
       // Don't reset the current scenario when just toggling inventory
       if (!isInventoryOpen) {
         currentScenarioRef.current = null;
         setShowScenarioChoices(false);
+        setShowNextYearButton(false);
       }
     }
 
@@ -118,11 +114,11 @@ const 選項按鈕: React.FC = () => {
 
   // This effect handles loading scenarios only for age_progression nodes
   useEffect(() => {
-    // Only process age scenarios when on age_progression node and hasn't been processed yet
-    if (isAgeProgressionNode && !hasProcessedAgeRef.current) {
+    // Only process age scenarios when on age_progression node
+    if (isAgeProgressionNode) {
       console.log(`Processing age scenario for age ${characterAge}`);
       
-      // Instead of updating the current node, directly load the next age scenario
+      // Load the next age scenario
       const newScenario = getRandomScenarioForAge(characterAge);
       
       if (newScenario) {
@@ -141,22 +137,15 @@ const 選項按鈕: React.FC = () => {
         
         // Set the current node to our custom node with the scenario text
         setCurrentNode(customNode);
-        
-        // If scenario has choices, show them immediately
-        if (newScenario.choices && newScenario.choices.length > 0) {
-          setShowScenarioChoices(true);
-        } else {
-          // If no choices, mark as processed so we show the next year button
-          hasProcessedAgeRef.current = true;
-        }
       }
     }
-  }, [isAgeProgressionNode, characterAge, currentNode, isInventoryOpen]);
+  }, [isAgeProgressionNode, characterAge, setCurrentNode]);
   
   // Reset scenario states helper function
   const resetScenario = () => {
-    hasProcessedAgeRef.current = false;
     currentScenarioRef.current = null;
+    setShowScenarioChoices(false);
+    setShowNextYearButton(false);
     
     // Clear from localStorage when moving to next age
     const storageKey = `scenario_age_${characterAge}`;
@@ -174,7 +163,7 @@ const 選項按鈕: React.FC = () => {
   }
 
   // If we're showing a scenario with multiple choices
-  if (showScenarioChoices && currentScenarioRef.current && currentScenarioRef.current.choices) {
+  if (showScenarioChoices && currentScenarioRef.current && isMultiChoiceScenario(currentScenarioRef.current)) {
     return (
       <ScenarioChoices 
         currentAgeScenario={currentScenarioRef.current} 
@@ -183,14 +172,12 @@ const 選項按鈕: React.FC = () => {
     );
   }
 
-  // If we're at a custom_age node and have processed the age scenario (no choices),
+  // If we're at a custom_age node with a single-choice scenario,
   // show a "Next Year" button to proceed to the next year
-  if ((isCustomAgeNode && hasProcessedAgeRef.current) || 
-      (isCustomAgeNode && currentScenarioRef.current && 
-       (!currentScenarioRef.current.choices || currentScenarioRef.current.choices.length === 0))) {
+  if (showNextYearButton && currentScenarioRef.current && isSingleChoiceScenario(currentScenarioRef.current)) {
     return (
       <NextYearButton 
-        currentAgeScenario={currentScenarioRef.current} 
+        currentScenario={currentScenarioRef.current} 
         resetScenario={resetScenario} 
       />
     );

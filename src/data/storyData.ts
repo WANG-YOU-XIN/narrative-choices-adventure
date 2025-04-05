@@ -6,46 +6,51 @@ import {
   ageScenarios, 
   getRandomScenarioForAge as getOriginalScenarioForAge,
   multiChoiceScenarios,
-  AgeScenario
+  AgeScenario,
+  getRandomMultiChoiceScenario
 } from './ageScenarios';
 import { gameItems, getItem } from './gameItems';
 import { checkConstitution } from './healthUtils';
+import { singleChoiceScenarios, getRandomSingleChoiceScenario, SingleChoiceScenario } from './singleChoiceScenarios';
 
-// Increase special scenario probability to 20%
-const SPECIAL_SCENARIO_PROBABILITY = 0.2;
+// Determines whether to use a multi-choice or single-choice scenario
+// Higher probability (30%) for multi-choice scenarios
+const MULTI_CHOICE_PROBABILITY = 0.3;
 
-// Custom getRandomScenarioForAge with higher probability for special scenarios
-export const getRandomScenarioForAge = (age: number): AgeScenario | null => {
-  const standardScenarios = ageScenarios[age] || [];
-  const specialScenarios = multiChoiceScenarios[age] || [];
+// Custom getRandomScenarioForAge that selects between multi-choice and single-choice scenarios
+export const getRandomScenarioForAge = (age: number): AgeScenario | SingleChoiceScenario | null => {
+  // Check if we have both types of scenarios available for this age
+  const hasMultiChoice = (multiChoiceScenarios[age] || []).length > 0;
+  const hasSingleChoice = (singleChoiceScenarios[age] || []).length > 0;
   
-  // No scenarios available for this age
-  if (standardScenarios.length === 0 && specialScenarios.length === 0) {
-    return null;
+  // If we only have one type, use that
+  if (hasMultiChoice && !hasSingleChoice) {
+    return getRandomMultiChoiceScenario(age);
+  }
+  if (!hasMultiChoice && hasSingleChoice) {
+    return getRandomSingleChoiceScenario(age);
   }
   
-  // Decide whether to use a special scenario (20% chance if available)
-  const useSpecialScenario = 
-    specialScenarios.length > 0 && 
-    Math.random() < SPECIAL_SCENARIO_PROBABILITY;
-  
-  if (useSpecialScenario) {
-    // Pick a random special scenario
-    const randomIndex = Math.floor(Math.random() * specialScenarios.length);
-    return specialScenarios[randomIndex];
-  } else if (standardScenarios.length > 0) {
-    // Pick a random standard scenario
-    const randomIndex = Math.floor(Math.random() * standardScenarios.length);
-    return standardScenarios[randomIndex];
+  // If we have both types, decide based on probability
+  if (hasMultiChoice && hasSingleChoice) {
+    const useMultiChoice = Math.random() < MULTI_CHOICE_PROBABILITY;
+    return useMultiChoice 
+      ? getRandomMultiChoiceScenario(age) 
+      : getRandomSingleChoiceScenario(age);
   }
   
-  // Fallback to special scenarios if standard ones aren't available
-  if (specialScenarios.length > 0) {
-    const randomIndex = Math.floor(Math.random() * specialScenarios.length);
-    return specialScenarios[randomIndex];
-  }
-  
+  // If we have neither, return null
   return null;
+};
+
+// Helper to check if a scenario is a multi-choice scenario
+export const isMultiChoiceScenario = (scenario: any): scenario is AgeScenario => {
+  return scenario && scenario.choices && Array.isArray(scenario.choices) && scenario.choices.length > 0;
+};
+
+// Helper to check if a scenario is a single-choice scenario
+export const isSingleChoiceScenario = (scenario: any): scenario is SingleChoiceScenario => {
+  return scenario && !scenario.choices;
 };
 
 // Export everything for backward compatibility
@@ -57,10 +62,14 @@ export {
   getRandomZhuaZhouItems,
   ageScenarios,
   multiChoiceScenarios,
+  singleChoiceScenarios,
   gameItems,
   getItem,
   checkConstitution,
+  getRandomSingleChoiceScenario,
+  getRandomMultiChoiceScenario
 };
 
 // Properly export types with 'export type'
 export type { AgeScenarioChoice } from './ageScenarios';
+export type { SingleChoiceScenario } from './singleChoiceScenarios';
