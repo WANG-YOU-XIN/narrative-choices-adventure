@@ -184,9 +184,10 @@ const 選項按鈕: React.FC = () => {
   }
 
   // If we're at a custom_age node and have processed the age scenario (no choices),
-  // or if we're at age_progression (for backward compatibility),
   // show a "Next Year" button to proceed to the next year
-  if ((isCustomAgeNode || isAgeProgressionNode) && hasProcessedAgeRef.current) {
+  if ((isCustomAgeNode && hasProcessedAgeRef.current) || 
+      (isCustomAgeNode && currentScenarioRef.current && 
+       (!currentScenarioRef.current.choices || currentScenarioRef.current.choices.length === 0))) {
     return (
       <NextYearButton 
         currentAgeScenario={currentScenarioRef.current} 
