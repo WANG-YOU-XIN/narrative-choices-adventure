@@ -2,7 +2,16 @@
 import React from 'react';
 import { useGame } from '../../context/GameContext';
 import { Button } from '@/components/ui/button';
-import { getRandomScenarioForAge, isMultiChoiceScenario, isSingleChoiceScenario } from '../../data/storyData';
+import { 
+  getRandomScenarioForAge, 
+  isMultiChoiceScenario, 
+  isSingleChoiceScenario,
+  isSpecialScenario,
+  getSpecialScenarioId,
+  getOriginalSpecialScenario,
+  markScenarioAsViewed,
+  getSpecialItem
+} from '../../data/storyData';
 import { AgeScenario } from '../../data/ageScenarios';
 import { SingleChoiceScenario } from '../../data/singleChoiceScenarios';
 import { toast } from "@/hooks/use-toast";
@@ -16,7 +25,7 @@ const NextYearButton: React.FC<NextYearButtonProps> = ({
   currentScenario, 
   resetScenario 
 }) => {
-  const { updateStat, increaseAge, setCurrentNode, characterAge } = useGame();
+  const { updateStat, increaseAge, setCurrentNode, characterAge, addToInventory } = useGame();
 
   // Helper function to show toast notifications for stat changes
   const showStatChangeToast = (statName: string, value: number) => {
@@ -41,9 +50,69 @@ const NextYearButton: React.FC<NextYearButtonProps> = ({
     });
   };
 
+  // Helper to handle special scenario effects
+  const handleSpecialScenarioEffects = (scenario: any) => {
+    if (!isSpecialScenario(scenario)) return;
+    
+    const specialScenarioId = getSpecialScenarioId(scenario);
+    if (!specialScenarioId) return;
+
+    const originalSpecialScenario = getOriginalSpecialScenario(specialScenarioId);
+    if (!originalSpecialScenario) return;
+    
+    // Mark this special scenario as viewed
+    markScenarioAsViewed(specialScenarioId);
+    
+    // Handle special item if applicable
+    if (originalSpecialScenario.effect?.itemId) {
+      const specialItem = getSpecialItem(originalSpecialScenario.effect.itemId);
+      if (specialItem) {
+        addToInventory(specialItem);
+        
+        // Show toast for item acquisition
+        toast({
+          title: `獲得特殊物品`,
+          description: `你獲得了「${specialItem.name}」！`,
+          variant: "default",
+        });
+        
+        // Apply item's stat effect if any
+        if (specialItem.effect) {
+          updateStat(specialItem.effect.statName, specialItem.effect.value);
+          // Show toast for stat change
+          showStatChangeToast(specialItem.effect.statName, specialItem.effect.value);
+        }
+      }
+    } 
+    
+    // Handle stat changes if applicable
+    if (originalSpecialScenario.effect?.statChanges) {
+      const statChanges = originalSpecialScenario.effect.statChanges;
+      
+      // Apply each stat change
+      Object.entries(statChanges).forEach(([statName, value]) => {
+        if (value && typeof value === 'number') {
+          updateStat(statName as any, value);
+          showStatChangeToast(statName, value);
+        }
+      });
+
+      // Show toast for special event
+      toast({
+        title: `特殊事件：${originalSpecialScenario.title}`,
+        description: `你經歷了一個改變命運的事件！`,
+        variant: "default",
+      });
+    }
+  };
+
   const handleNextYear = () => {
-    // Apply the scenario effect now (for scenarios without choices)
-    if (currentScenario && currentScenario.effect) {
+    // Check if this is a special scenario
+    if (currentScenario && isSpecialScenario(currentScenario)) {
+      handleSpecialScenarioEffects(currentScenario);
+    }
+    // Apply the scenario effect for regular scenarios (for scenarios without choices)
+    else if (currentScenario && currentScenario.effect) {
       updateStat(currentScenario.effect.statName, currentScenario.effect.value);
       // Show toast notification for stat change
       showStatChangeToast(currentScenario.effect.statName, currentScenario.effect.value);
@@ -85,7 +154,9 @@ const NextYearButton: React.FC<NextYearButtonProps> = ({
         className="choice-button w-full text-lg py-4 bg-game-primary hover:bg-game-accent text-white"
         onClick={handleNextYear}
       >
-        下一年
+        {currentScenario && isSpecialScenario(currentScenario) 
+          ? getOriginalSpecialScenario(getSpecialScenarioId(currentScenario)!)?.buttonText || '繼續'
+          : '下一年'}
       </Button>
     </div>
   );

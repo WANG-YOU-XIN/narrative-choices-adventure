@@ -1,7 +1,14 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { useGame } from '../context/GameContext';
-import { getStoryNode, checkConstitution, getRandomScenarioForAge, isMultiChoiceScenario, isSingleChoiceScenario } from '../data/storyData';
+import { 
+  getStoryNode, 
+  checkConstitution, 
+  getRandomScenarioForAge, 
+  isMultiChoiceScenario, 
+  isSingleChoiceScenario,
+  isSpecialScenario
+} from '../data/storyData';
 import { AgeScenario } from '../data/ageScenarios';
 import { SingleChoiceScenario } from '../data/singleChoiceScenarios';
 import 抓周活動 from './抓周活動';
@@ -61,7 +68,7 @@ const 選項按鈕: React.FC = () => {
               setShowScenarioChoices(true);
               setShowNextYearButton(false);
             } else {
-              // For single-choice scenarios, show the next year button
+              // For single-choice scenarios or special scenarios, show the next year button
               setShowScenarioChoices(false);
               setShowNextYearButton(true);
             }
@@ -172,9 +179,10 @@ const 選項按鈕: React.FC = () => {
     );
   }
 
-  // If we're at a custom_age node with a single-choice scenario,
+  // If we're at a custom_age node with a single-choice scenario or special scenario,
   // show a "Next Year" button to proceed to the next year
-  if (showNextYearButton && currentScenarioRef.current && isSingleChoiceScenario(currentScenarioRef.current)) {
+  if (showNextYearButton && currentScenarioRef.current && 
+      (isSingleChoiceScenario(currentScenarioRef.current) || isSpecialScenario(currentScenarioRef.current))) {
     return (
       <NextYearButton 
         currentScenario={currentScenarioRef.current} 
