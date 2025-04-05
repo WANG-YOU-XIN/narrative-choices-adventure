@@ -63,8 +63,9 @@ const 選項按鈕: React.FC = () => {
             // If scenario has choices, show them
             if (parsedScenario.choices && parsedScenario.choices.length > 0) {
               setShowScenarioChoices(true);
+              hasProcessedAgeRef.current = false; // Reset so we don't show the NextYearButton
             } else {
-              // If no choices, show the next year button
+              // If no choices, mark as processed so we show the next year button
               hasProcessedAgeRef.current = true;
             }
           } catch (e) {
@@ -141,12 +142,13 @@ const 選項按鈕: React.FC = () => {
         // Set the current node to our custom node with the scenario text
         setCurrentNode(customNode);
         
-        // If scenario has choices, show them
+        // If scenario has choices, show them immediately
         if (newScenario.choices && newScenario.choices.length > 0) {
           setShowScenarioChoices(true);
+        } else {
+          // If no choices, mark as processed so we show the next year button
+          hasProcessedAgeRef.current = true;
         }
-        
-        hasProcessedAgeRef.current = true;
       }
     }
   }, [isAgeProgressionNode, characterAge, currentNode, isInventoryOpen]);
