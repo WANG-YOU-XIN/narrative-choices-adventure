@@ -3,11 +3,10 @@ import React from 'react';
 import { useGame } from '../../context/GameContext';
 import { getStoryNode } from '../../data/storyData';
 import { Button } from '@/components/ui/button';
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 const StoryChoices = () => {
   const { currentNode, setCurrentNode, increaseAge, updateStat } = useGame();
-  const { toast } = useToast();
 
   const handleChoiceClick = (choiceIndex: number) => {
     const choice = currentNode.choices[choiceIndex];
@@ -17,38 +16,36 @@ const StoryChoices = () => {
       setCurrentNode(nextNode);
     }
     
-    // Handle age change if specified
-    if (choice.effect && choice.effect.type === 'updateStat') {
+    // Handle effects if specified
+    if (choice.effect) {
       // Handle age change
-      if (choice.effect.ageChange) {
+      if (choice.effect.type === 'updateStat' && choice.effect.ageChange) {
         increaseAge(choice.effect.ageChange);
       }
       
       // Handle stat changes with toast notifications
-      if (choice.effect.stats) {
-        Object.entries(choice.effect.stats).forEach(([stat, value]) => {
-          if (value !== 0) {
-            // Update the stat
-            updateStat(stat as keyof typeof choice.effect.stats, value);
-            
-            // Show toast notification with appropriate styling
-            toast({
-              title: `${stat} ${value > 0 ? '增加' : '減少'} ${Math.abs(value)}`,
-              variant: value < 0 ? "destructive" : "default",
-              className: value < 0 ? "bg-red-500 text-black" : "bg-white text-black",
-              duration: 2000, // 2 seconds
-            });
+      if (choice.effect.type === 'updateStat' && choice.effect.statName && choice.effect.value !== undefined) {
+        updateStat(choice.effect.statName, choice.effect.value);
+        
+        // Show toast notification with appropriate styling
+        toast(
+          `${choice.effect.statName} ${choice.effect.value > 0 ? '增加' : '減少'} ${Math.abs(choice.effect.value)}`,
+          {
+            className: choice.effect.value < 0 ? "bg-red-500 text-black" : "bg-white text-black",
+            duration: 2000, // 2 seconds
           }
-        });
+        );
       }
       
       // Handle item addition
-      if (choice.effect.addItem) {
-        toast({
-          title: `獲得物品：${choice.effect.addItem.name}`,
-          className: "bg-white text-black",
-          duration: 2000,
-        });
+      if (choice.effect.type === 'addItem' && choice.effect.itemId) {
+        toast(
+          `獲得物品：${choice.effect.itemId}`,
+          {
+            className: "bg-white text-black",
+            duration: 2000,
+          }
+        );
       }
     }
   };
