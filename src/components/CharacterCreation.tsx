@@ -7,13 +7,12 @@ import 角色詳細資料表單 from './角色創建/角色詳細資料表單';
 const CharacterCreation: React.FC = () => {
   const { startGame, updateStat } = useGame();
   const [name, setName] = useState('');
-  const [gender, setGender] = useState<'male' | 'female'>('male');
   const [remainingPoints, setRemainingPoints] = useState(20);
   const [stats, setStats] = useState({
     attack: 0,
     constitution: 0,
     agility: 0,
-    charm: 0, // Changed from defense to charm
+    charm: 0,
     intelligence: 0
   });
 
@@ -42,10 +41,6 @@ const CharacterCreation: React.FC = () => {
     setName(newName);
   };
 
-  const handleGenderChange = (newGender: 'male' | 'female') => {
-    setGender(newGender);
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -56,8 +51,8 @@ const CharacterCreation: React.FC = () => {
     
     console.log("Starting game with stats:", stats);
     
-    // Start the game first to initialize game state
-    startGame(name, gender);
+    // Always use male gender since gender selection has been removed
+    startGame(name, 'male');
     
     // Apply stats to the game after initialization
     Object.entries(stats).forEach(([stat, value]) => {
@@ -78,9 +73,7 @@ const CharacterCreation: React.FC = () => {
       
       <角色詳細資料表單
         name={name}
-        gender={gender}
         onNameChange={handleNameChange}
-        onGenderChange={handleGenderChange}
         onSubmit={handleSubmit}
         remainingPoints={remainingPoints}
       />

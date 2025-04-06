@@ -97,7 +97,7 @@
   }
 
   body {
-    @apply bg-black text-white m-0 p-0;
+    @apply bg-gray-900 text-white m-0 p-0;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
@@ -111,7 +111,7 @@
 
 .inventory-slot {
   aspect-ratio: 1/1;
-  border: 2px solid theme('colors.game.border');
+  border: 2px solid white;
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -122,7 +122,7 @@
 .story-text {
   overflow-y: auto;
   scrollbar-width: thin;
-  scrollbar-color: theme('colors.game.accent') transparent;
+  scrollbar-color: white transparent;
 }
 
 .story-text::-webkit-scrollbar {
@@ -134,12 +134,17 @@
 }
 
 .story-text::-webkit-scrollbar-thumb {
-  background-color: theme('colors.game.accent');
+  background-color: white;
   border-radius: 3px;
 }
 
 .choice-button {
   transition: all 0.2s ease;
+  white-space: normal !important;
+  text-align: left;
+  word-break: break-word;
+  height: auto;
+  min-height: 3rem;
 }
 
 .choice-button:hover {
@@ -151,4 +156,9 @@
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 8px;
+}
+
+.fixed-aspect-ratio {
+  aspect-ratio: 9/16;
+  max-height: 100vh;
 }

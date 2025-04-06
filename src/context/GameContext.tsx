@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { StoryNode, InventoryItem, CharacterStats, DeathCondition } from '../types/game.types';
 import { initialStory } from '../data/storyData';
@@ -29,10 +28,10 @@ const defaultStats: CharacterStats = {
   attack: 0,
   constitution: 0,
   agility: 0,
-  charm: 0,  // Changed from defense to charm
+  charm: 0,
   intelligence: 0,
-  speed: 1.0, // Changed from 7 to 1.0
-  health: 0  // Changed from 25 to 0, will be calculated based on constitution
+  speed: 1.0,
+  health: 0
 };
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -68,10 +67,8 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       
       newStats[statName] = prev[statName] + value;
       
-      // If constitution is updated, also update health (10 points per constitution)
       if (statName === 'constitution') {
         newStats.health = newStats.constitution * 10;
-        // Update initial constitution if the game hasn't started yet
         if (!gameStarted) {
           setInitialConstitution(newStats.constitution);
         }
@@ -96,10 +93,8 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setDeathReason(null);
     setInventory([]);
     
-    // Set initial constitution based on current constitution
     setInitialConstitution(characterStats.constitution);
     
-    // Set health based on constitution (10 points per constitution)
     setCharacterStats(prev => ({
       ...prev,
       health: prev.constitution * 10
@@ -109,12 +104,10 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const checkDeathConditions = (age: number): boolean => {
     let isDead = false;
     
-    // 只在1歲時檢查死亡條件
     if (age === 1) {
       console.log("Checking death conditions at age 1");
       console.log("Current stats:", characterStats);
       
-      // 檢查體質是否小於等於 2
       if (characterStats.constitution <= 2) {
         const random = Math.floor(Math.random() * 100) + 1;
         console.log(`Constitution check: ${characterStats.constitution} <= 2, random: ${random}`);
@@ -126,7 +119,6 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         }
       }
       
-      // 如果沒有因為體質而死亡，檢查智力是否小於等於 2
       if (!isDead && characterStats.intelligence <= 2) {
         const random = Math.floor(Math.random() * 100) + 1;
         console.log(`Intelligence check: ${characterStats.intelligence} <= 2, random: ${random}`);
@@ -148,7 +140,6 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     
     console.log(`Age increased to ${newAge}, checking death conditions...`);
     
-    // Check for death conditions
     const isDead = checkDeathConditions(newAge);
     if (isDead) {
       console.log("Game over due to death condition");
@@ -156,7 +147,6 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     } else {
       console.log("Survived death check");
       
-      // Increase health based on initial constitution
       if (!isDead) {
         setCharacterStats(prev => ({
           ...prev,

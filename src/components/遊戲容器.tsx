@@ -18,7 +18,7 @@ const 遊戲容器: React.FC = () => {
   // If game hasn't started, show character creation
   if (!gameStarted) {
     return (
-      <div className="flex flex-col w-full h-full max-w-md mx-auto bg-black text-white relative">
+      <div className="flex flex-col w-full h-full max-w-md mx-auto bg-gray-800 text-white relative border border-white">
         <CharacterCreation />
       </div>
     );
@@ -27,7 +27,7 @@ const 遊戲容器: React.FC = () => {
   // If game is over, show death screen
   if (isGameOver) {
     return (
-      <div className="flex flex-col w-full h-full max-w-md mx-auto bg-black text-white relative">
+      <div className="flex flex-col w-full h-full max-w-md mx-auto bg-gray-800 text-white relative border border-white">
         <GameOver />
       </div>
     );
@@ -35,7 +35,7 @@ const 遊戲容器: React.FC = () => {
 
   // Game has started and is not over
   return (
-    <div className="flex flex-col w-full h-full max-w-md mx-auto bg-black text-white relative">
+    <div className="flex flex-col w-full h-full max-w-md mx-auto bg-gray-800 text-white relative border border-white">
       {!isInventoryOpen ? (
         // Story mode view
         <>
