@@ -6,21 +6,18 @@ import { Input } from '@/components/ui/input';
 import { Dice1 } from 'lucide-react';
 
 interface 角色詳細資料表單Props {
-  onComplete: () => void;
+  name: string;
+  onNameChange: (newName: string) => void;
+  onSubmit: (e: React.FormEvent) => void;
+  remainingPoints: number;
 }
 
-const 角色詳細資料表單: React.FC<角色詳細資料表單Props> = ({ onComplete }) => {
-  const { startGame } = useGame();
-  const [name, setName] = useState('');
-  
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (name.trim() !== '') {
-      startGame(name, 'male'); // We don't use gender selection anymore, default to 'male'
-      onComplete();
-    }
-  };
-
+const 角色詳細資料表單: React.FC<角色詳細資料表單Props> = ({ 
+  name, 
+  onNameChange, 
+  onSubmit, 
+  remainingPoints 
+}) => {
   // Generate a random Chinese name
   const generateRandomName = () => {
     const firstNames = ['李', '王', '張', '劉', '陳', '楊', '趙', '黃', '周', '吳', 
@@ -43,20 +40,20 @@ const 角色詳細資料表單: React.FC<角色詳細資料表單Props> = ({ onC
     const useThirdName = Math.random() > 0.5;
     const thirdName = useThirdName ? thirdNames[Math.floor(Math.random() * thirdNames.length)] : '';
     
-    setName(firstName + secondName + thirdName);
+    onNameChange(firstName + secondName + thirdName);
   };
 
   return (
     <div className="p-6 w-full">
       <h2 className="text-xl font-bold text-center mb-6">角色資料</h2>
       
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={onSubmit} className="space-y-6">
         <div className="space-y-2">
           <div className="flex items-center space-x-2">
             <Input
               id="name"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => onNameChange(e.target.value)}
               placeholder="輸入你的名字"
               className="flex-1"
             />
@@ -72,7 +69,7 @@ const 角色詳細資料表單: React.FC<角色詳細資料表單Props> = ({ onC
         </div>
         
         <div className="mt-6">
-          <Button type="submit" className="w-full" disabled={name.trim() === ''}>
+          <Button type="submit" className="w-full" disabled={name.trim() === '' || remainingPoints > 0}>
             開始遊戲
           </Button>
         </div>
