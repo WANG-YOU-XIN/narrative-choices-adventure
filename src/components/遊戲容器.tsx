@@ -3,7 +3,7 @@ import React from 'react';
 import { useGame } from '../context/GameContext';
 import 故事顯示 from './故事顯示';
 import 選項按鈕 from './選項按鈕';
-import 物品欄按鈕 from './物品欄按鈕';
+import 物品欄按鈕 from './物品欄按鈕.tsx';
 import 物品欄 from './物品欄';
 import 角色屬性 from './角色屬性';
 import 角色簡易圖 from './角色簡易圖';
