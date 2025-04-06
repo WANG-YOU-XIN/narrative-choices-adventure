@@ -108,9 +108,9 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       console.log("Checking death conditions at age 1");
       console.log("Current stats:", characterStats);
       
-      if (characterStats.constitution <= 2) {
+      if (characterStats.constitution < 1) {
         const random = Math.floor(Math.random() * 100) + 1;
-        console.log(`Constitution check: ${characterStats.constitution} <= 2, random: ${random}`);
+        console.log(`Constitution check: ${characterStats.constitution} < 1, random: ${random}`);
         
         if (random <= 90) {
           setDeathReason("體弱多病，夭折死亡");
@@ -119,9 +119,9 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         }
       }
       
-      if (!isDead && characterStats.intelligence <= 2) {
+      if (!isDead && characterStats.intelligence < 1) {
         const random = Math.floor(Math.random() * 100) + 1;
-        console.log(`Intelligence check: ${characterStats.intelligence} <= 2, random: ${random}`);
+        console.log(`Intelligence check: ${characterStats.intelligence} < 1, random: ${random}`);
         
         if (random <= 90) {
           setDeathReason("大腦萎縮，夭折死亡");

@@ -49,7 +49,7 @@ const 物品欄: React.FC = () => {
             {item && (
               <div className="flex flex-col items-center">
                 <div className="text-2xl">{item.icon}</div>
-                <div className="text-xs text-center mt-1">{item.name}</div>
+                <div className="text-xs text-white text-center mt-1">{item.name}</div>
               </div>
             )}
           </div>

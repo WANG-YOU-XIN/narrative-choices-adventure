@@ -27,12 +27,24 @@ const StoryChoices = () => {
       if (choice.effect.type === 'updateStat' && choice.effect.statName && choice.effect.value !== undefined) {
         updateStat(choice.effect.statName, choice.effect.value);
         
+        // Get stat display name
+        const statDisplayNames: Record<string, string> = {
+          'attack': '攻擊',
+          'constitution': '體質',
+          'agility': '敏捷',
+          'charm': '魅力',
+          'intelligence': '智力'
+        };
+        
+        const displayName = statDisplayNames[choice.effect.statName] || choice.effect.statName;
+        const isPositive = choice.effect.value > 0;
+        
         // Show toast notification with appropriate styling
         toast(
-          `${choice.effect.statName} ${choice.effect.value > 0 ? '增加' : '減少'} ${Math.abs(choice.effect.value)}`,
+          `${displayName}${isPositive ? '提升' : '降低'} ${Math.abs(choice.effect.value)} 點`,
           {
-            className: choice.effect.value < 0 ? "bg-red-500 text-black" : "bg-white text-black",
-            duration: 2000, // 2 seconds
+            className: isPositive ? "bg-white text-black" : "bg-red-500 text-black",
+            duration: 2000,
           }
         );
       }

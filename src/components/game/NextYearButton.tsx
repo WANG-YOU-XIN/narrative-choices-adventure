@@ -14,7 +14,7 @@ import {
 } from '../../data/storyData';
 import { AgeScenario } from '../../data/ageScenarios';
 import { SingleChoiceScenario } from '../../data/singleChoiceScenarios';
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 interface NextYearButtonProps {
   currentScenario: AgeScenario | SingleChoiceScenario | null;
@@ -41,13 +41,15 @@ const NextYearButton: React.FC<NextYearButtonProps> = ({
 
     const displayName = statDisplayNames[statName] || statName;
     const changeText = value > 0 ? `+${value}` : value;
-    const toastType = value > 0 ? '提升' : '降低';
+    const isPositive = value > 0;
     
-    toast({
-      title: `${displayName}${toastType}`,
-      description: `${displayName}值${toastType}了 ${Math.abs(value)} 點`,
-      variant: value > 0 ? "default" : "destructive",
-    });
+    toast(
+      `${displayName}${isPositive ? '提升' : '降低'} ${Math.abs(value)} 點`,
+      {
+        className: isPositive ? "bg-white text-black" : "bg-red-500 text-black",
+        duration: 2000,
+      }
+    );
   };
 
   // Helper to handle special scenario effects
@@ -70,11 +72,13 @@ const NextYearButton: React.FC<NextYearButtonProps> = ({
         addToInventory(specialItem);
         
         // Show toast for item acquisition
-        toast({
-          title: `獲得特殊物品`,
-          description: `你獲得了「${specialItem.name}」！`,
-          variant: "default",
-        });
+        toast(
+          `獲得特殊物品：${specialItem.name}`,
+          {
+            className: "bg-white text-black",
+            duration: 2000,
+          }
+        );
         
         // Apply item's stat effect if any
         if (specialItem.effect) {
@@ -98,11 +102,13 @@ const NextYearButton: React.FC<NextYearButtonProps> = ({
       });
 
       // Show toast for special event
-      toast({
-        title: `特殊事件：${originalSpecialScenario.title}`,
-        description: `你經歷了一個改變命運的事件！`,
-        variant: "default",
-      });
+      toast(
+        `特殊事件：${originalSpecialScenario.title}`,
+        {
+          className: "bg-white text-black",
+          duration: 2000,
+        }
+      );
     }
   };
 
