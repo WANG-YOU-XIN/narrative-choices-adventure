@@ -12,7 +12,7 @@ interface 屬性點分配Props {
     intelligence: number;
   };
   remainingPoints: number;
-  onStatChange: (stat: keyof typeof stats, value: number) => void;
+  onStatChange: (stat: keyof 屬性點分配Props['stats'], value: number) => void;
 }
 
 const 屬性點分配: React.FC<屬性點分配Props> = ({ stats, remainingPoints, onStatChange }) => {
