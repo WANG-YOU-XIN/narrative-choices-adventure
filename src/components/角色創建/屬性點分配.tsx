@@ -1,6 +1,5 @@
 
-import React, { useState } from 'react';
-import { useGame } from '../../context/GameContext';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Plus, Minus } from 'lucide-react';
 
