@@ -1,8 +1,6 @@
 
 import React from 'react';
 import { useGame } from '../context/GameContext';
-import { User, UserRound } from 'lucide-react';
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const 角色簡易圖: React.FC = () => {
   const { characterName, characterGender, characterAge } = useGame();
@@ -14,15 +12,35 @@ const 角色簡易圖: React.FC = () => {
         <span className="text-game-text text-lg font-bold">年齡: {characterAge}</span>
       </div>
       
-      {/* 角色頭像 */}
-      <Avatar className="w-24 h-24 bg-game-primary mb-4">
-        <AvatarFallback className="text-white text-4xl">
-          {characterGender === 'male' ? <User size={64} /> : <UserRound size={64} />}
-        </AvatarFallback>
-      </Avatar>
+      {/* 角色頭像 (火柴人) */}
+      <div className="flex flex-col items-center justify-center mb-4">
+        {/* Head */}
+        <div className="w-16 h-16 rounded-full border-2 border-white flex items-center justify-center mb-1">
+          {/* Face */}
+          <div className="relative w-10 h-6">
+            {/* Eyes */}
+            <div className="absolute top-1 left-1 w-2 h-2 rounded-full bg-white"></div>
+            <div className="absolute top-1 right-1 w-2 h-2 rounded-full bg-white"></div>
+            {/* Smile */}
+            <div className="absolute bottom-0 left-2 w-6 h-2 border-b-2 border-white rounded-b-full"></div>
+          </div>
+        </div>
+        {/* Body */}
+        <div className="w-1 h-14 bg-white"></div>
+        {/* Arms */}
+        <div className="relative w-12 h-1">
+          <div className="absolute top-[-14px] left-0 w-12 h-1 bg-white transform -rotate-30"></div>
+          <div className="absolute top-[-14px] right-0 w-12 h-1 bg-white transform rotate-30"></div>
+        </div>
+        {/* Legs */}
+        <div className="relative w-12 h-12">
+          <div className="absolute top-[-2px] left-1 w-1 h-12 bg-white transform -rotate-15"></div>
+          <div className="absolute top-[-2px] right-1 w-1 h-12 bg-white transform rotate-15"></div>
+        </div>
+      </div>
       
       {/* 角色名稱 */}
-      <h3 className="text-xl text-game-text font-bold">{characterName}</h3>
+      <h3 className="text-xl text-black font-bold">{characterName}</h3>
     </div>
   );
 };

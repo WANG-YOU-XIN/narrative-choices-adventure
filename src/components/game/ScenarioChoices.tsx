@@ -3,7 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useGame } from '../../context/GameContext';
 import { AgeScenario, AgeScenarioChoice } from '../../data/ageScenarios';
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 interface ScenarioChoicesProps {
   currentAgeScenario: AgeScenario;
@@ -32,13 +32,15 @@ const ScenarioChoices: React.FC<ScenarioChoicesProps> = ({
       
       const displayName = statDisplayNames[choice.effect.statName] || choice.effect.statName;
       const changeText = choice.effect.value > 0 ? `+${choice.effect.value}` : choice.effect.value;
-      const toastType = choice.effect.value > 0 ? '提升' : '降低';
+      const isPositive = choice.effect.value > 0;
       
-      toast({
-        title: `${displayName}${toastType}`,
-        description: `${displayName}值${toastType}了 ${Math.abs(choice.effect.value)} 點`,
-        variant: choice.effect.value > 0 ? "default" : "destructive",
-      });
+      toast(
+        `${displayName}${isPositive ? '提升' : '降低'} ${Math.abs(choice.effect.value)} 點`,
+        {
+          className: isPositive ? "bg-white text-black" : "bg-red-500 text-black",
+          duration: 2000,
+        }
+      );
     }
     
     // Move to the next year

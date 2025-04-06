@@ -8,10 +8,21 @@ const App: React.FC = () => {
   return (
     <GameProvider>
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="w-full h-screen max-w-md mx-auto overflow-hidden">
+        <div className="w-full h-screen max-w-md mx-auto overflow-hidden relative">
           <遊戲容器 />
+          <Toaster 
+            position="bottom-center"
+            richColors 
+            closeButton
+            toastOptions={{
+              style: {
+                marginBottom: '140px', // Position above the choice buttons area
+                animation: 'fade-in 0.3s ease, fade-out 0.3s ease forwards 1.7s',
+              },
+              duration: 2000,
+            }}
+          />
         </div>
-        <Toaster position="top-center" richColors closeButton />
       </div>
     </GameProvider>
   );
