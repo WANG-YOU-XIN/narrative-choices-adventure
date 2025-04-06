@@ -126,32 +126,21 @@ const NextYearButton: React.FC<NextYearButtonProps> = ({
     increaseAge(1);
     resetScenario();
     
-    // Get the new scenario for the next age
-    const newAge = characterAge + 1;
-    const newScenario = getRandomScenarioForAge(newAge);
+    // Create a transition node to move to age progression
+    const ageProgressionNode = {
+      id: 'age_progression',
+      text: '時光飛逝，你的人生正在展開...',
+      choices: []
+    };
     
-    // If we have a new scenario, update the story text
-    if (newScenario) {
-      // Store the new scenario in localStorage
-      const newStorageKey = `scenario_age_${newAge}`;
-      localStorage.setItem(newStorageKey, JSON.stringify(newScenario));
-      
-      // Create a custom node with the scenario text
-      const customNode = {
-        id: `custom_age_${newAge}`,
-        text: `【年齡：${newAge}歲】\n${newScenario.text}`,
-        choices: []  // Empty choices since we'll handle them in the 選項按鈕 component
-      };
-      
-      // Set the current node to our custom node with the scenario text
-      setCurrentNode(customNode);
-    }
+    // Set the current node to our age progression node
+    setCurrentNode(ageProgressionNode);
   };
 
   return (
     <div className="w-full flex flex-col space-y-4 p-4">
       <Button
-        className="choice-button w-full text-lg py-4 bg-game-primary hover:bg-game-accent text-white"
+        className="choice-button w-full text-lg py-4 bg-game-primary hover:bg-game-accent text-white whitespace-normal break-words"
         onClick={handleNextYear}
       >
         {currentScenario && isSpecialScenario(currentScenario) 

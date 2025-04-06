@@ -174,7 +174,10 @@ const 選項按鈕: React.FC = () => {
     return (
       <ScenarioChoices 
         currentAgeScenario={currentScenarioRef.current} 
-        onChoiceSelected={() => setShowScenarioChoices(false)} 
+        onChoiceSelected={() => {
+          setShowScenarioChoices(false);
+          resetScenario();
+        }} 
       />
     );
   }

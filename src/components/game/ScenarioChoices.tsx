@@ -14,7 +14,7 @@ const ScenarioChoices: React.FC<ScenarioChoicesProps> = ({
   currentAgeScenario, 
   onChoiceSelected 
 }) => {
-  const { updateStat, increaseAge } = useGame();
+  const { updateStat, increaseAge, setCurrentNode } = useGame();
 
   const handleChoiceClick = (choice: AgeScenarioChoice) => {
     // Apply the choice effect to stats
@@ -44,6 +44,20 @@ const ScenarioChoices: React.FC<ScenarioChoicesProps> = ({
     // Move to the next year
     increaseAge(1);
     
+    // Clear the current age scenario from localStorage to prevent it from showing again
+    const storageKey = `scenario_age_${currentAgeScenario.age}`;
+    localStorage.removeItem(storageKey);
+    
+    // Create a new node to proceed to the next age progression
+    const nextNode = {
+      id: 'age_progression',
+      text: '時光飛逝，你的人生正在展開...',
+      choices: []
+    };
+    
+    // Set the current node to proceed to age progression
+    setCurrentNode(nextNode);
+    
     // Inform parent that a choice was selected
     onChoiceSelected();
   };
@@ -53,7 +67,7 @@ const ScenarioChoices: React.FC<ScenarioChoicesProps> = ({
       {currentAgeScenario.choices.map((choice, index) => (
         <Button
           key={index}
-          className="choice-button w-full py-4 bg-gray-700 hover:bg-gray-600 text-white border border-gray-500 rounded-lg text-left px-4 whitespace-normal"
+          className="choice-button w-full py-4 bg-gray-700 hover:bg-gray-600 text-white border border-gray-500 rounded-lg text-left px-4 whitespace-normal break-words"
           onClick={() => handleChoiceClick(choice)}
         >
           {choice.text}

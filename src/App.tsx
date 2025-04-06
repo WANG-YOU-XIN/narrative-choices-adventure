@@ -8,7 +8,7 @@ const App: React.FC = () => {
   return (
     <GameProvider>
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="w-full h-screen max-w-md mx-auto overflow-hidden fixed-aspect-ratio">
+        <div className="w-full h-screen max-w-md mx-auto overflow-hidden">
           <遊戲容器 />
         </div>
         <Toaster />
