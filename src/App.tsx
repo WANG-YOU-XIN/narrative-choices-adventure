@@ -2,7 +2,7 @@
 import React from 'react';
 import { GameProvider } from './context/GameContext';
 import 遊戲容器 from './components/遊戲容器';
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "sonner";
 
 const App: React.FC = () => {
   return (
@@ -11,7 +11,7 @@ const App: React.FC = () => {
         <div className="w-full h-screen max-w-md mx-auto overflow-hidden">
           <遊戲容器 />
         </div>
-        <Toaster />
+        <Toaster position="top-center" richColors closeButton />
       </div>
     </GameProvider>
   );

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useGame } from '../../context/GameContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,29 +18,24 @@ const 角色詳細資料表單: React.FC<角色詳細資料表單Props> = ({
   onSubmit, 
   remainingPoints 
 }) => {
-  // Generate a random Chinese name
+  // Custom fun Chinese names
+  const funnyNames = [
+    '騎著蝸牛追火箭', '油炸皮卡丘', '吃可愛長大的', '帥到被人砍', 
+    '我是釘子我怕個錘', '牽著螞蟻去散步', '騎著蚊子嗷嗷飛', '蹲在墳頭嚇鬼',
+    '抱著嫦娥烤玉兔', '騎著毛驢闖紅燈', '扛著拖把掃天下', '牽著蝸牛去跑步',
+    '騎著烏龜去追龍', '抱著大樹唱征服', '蹲在廁所唱國歌', '騎著鯊魚去蹦迪',
+    '吃辣椒不吐葡萄皮', '我是奧特慢', '騎豬看日出', '文藝小流氓',
+    '呆萌綜合征', '先生，請自重', '你醜別皺眉', '撩最軟的妹',
+    '逗比的胖兒', '西瓜撞地球', '後來的我們', '無情的泡麵',
+    '鐵鎚妹妹', '悲傷在舞蹈', '被自己帥醒', '奶油莓莓卷',
+    '燃燒的胸毛', '人醜脾氣大', '我叫萌萌噠', '毛驢倒著騎',
+    '紅杏立牆頭', '壹只流浪豬', '酷到不能行', '我是釘子我怕個錘'
+  ];
+  
+  // Generate a random funny name
   const generateRandomName = () => {
-    const firstNames = ['李', '王', '張', '劉', '陳', '楊', '趙', '黃', '周', '吳', 
-                        '徐', '孫', '朱', '馬', '胡', '郭', '林', '何', '高', '梁', 
-                        '鄭', '羅', '宋', '謝', '唐', '韓', '曹', '許', '鄧', '蕭',
-                        '馮', '曾', '程', '蔡', '彭', '潘', '袁', '於', '董', '余',
-                        '蘇', '葉', '呂', '魏', '蔣', '田', '杜', '丁', '沈', '姜'];
-    
-    const secondNames = ['偉', '強', '磊', '洋', '勇', '軍', '傑', '濤', '超', '明', 
-                        '剛', '平', '輝', '東', '輝', '華', '健', '亮', '志', '杰', 
-                        '俊', '敏', '靜', '潔', '艷', '麗', '娟', '敏', '靜', '秀',
-                        '娜', '莉', '霞', '紅', '萍', '芳', '欣', '怡', '雯', '婷',
-                        '媛', '琳', '雪', '靖', '琦', '晨', '天', '瀚', '明', '哲'];
-    
-    const thirdNames = ['', '軒', '宇', '浩', '皓', '天', '文', '明', '子', '博', 
-                       '達', '雲', '翔', '華', '欣', '如', '瑤', '月', '悅', '恆'];
-    
-    const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
-    const secondName = secondNames[Math.floor(Math.random() * secondNames.length)];
-    const useThirdName = Math.random() > 0.5;
-    const thirdName = useThirdName ? thirdNames[Math.floor(Math.random() * thirdNames.length)] : '';
-    
-    onNameChange(firstName + secondName + thirdName);
+    const randomIndex = Math.floor(Math.random() * funnyNames.length);
+    onNameChange(funnyNames[randomIndex]);
   };
 
   return (
@@ -55,7 +50,7 @@ const 角色詳細資料表單: React.FC<角色詳細資料表單Props> = ({
               value={name}
               onChange={(e) => onNameChange(e.target.value)}
               placeholder="輸入你的名字"
-              className="flex-1"
+              className="flex-1 text-black"
             />
             <Button 
               type="button"
